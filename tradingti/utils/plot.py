@@ -1,6 +1,6 @@
 '''
-File name: _plot.py
-    Plotting methods defined under the tradingti.utils module.
+File name: plot.py
+    Plotting methods defined under the tradingti.utils.plot module.
            
 Author: Vasileios Saveris
 enail: vsaveris@gmail.com
