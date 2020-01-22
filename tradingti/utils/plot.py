@@ -1,6 +1,6 @@
 '''
 File name: _plot.py
-    Plotting methods defined under the utils package.
+    Plotting methods defined under the tradingti.utils module.
            
 Author: Vasileios Saveris
 enail: vsaveris@gmail.com
@@ -18,11 +18,11 @@ import pandas.core as pc
 '''
 Constants
 '''
-C_DEFAULT_COLORS_PALETTE = ['rosybrown', 'firebrick', 'olivedrab', 'seagreen', 'royalblue',
-    'mediumpurple', 'darkorange']
+C_DEFAULT_COLORS_PALETTE = ['rosybrown', 'firebrick', 'olivedrab']
 
 
-def lineGraph(data, title = '', x_label = '', y_label = '', colors_palette = C_DEFAULT_COLORS_PALETTE):
+def lineGraph(data, title = 'Untitled Graph', x_label = 'Date', y_label = 'No Label', 
+    colors_palette = C_DEFAULT_COLORS_PALETTE):
     '''
     Returns a lines graph of type matplotlib.pyplot.
     
