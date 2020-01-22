@@ -30,6 +30,9 @@ def fillMissingValues(df_data):
             values filled.
     '''
     
+    # Sort dataframe on index ascending
+    df_data = df_data.sort_index(ascending = True)
+    
     # Fill forward
     df_data.fillna(method = 'ffill', inplace = True)
     
@@ -37,5 +40,3 @@ def fillMissingValues(df_data):
     df_data.fillna(method = 'bfill', inplace = True)
     
     return df_data
-    
-    
