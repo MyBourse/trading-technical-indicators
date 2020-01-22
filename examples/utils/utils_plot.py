@@ -20,7 +20,7 @@ from pandas.plotting import register_matplotlib_converters
 register_matplotlib_converters()
 
 # Read data from csv file. Set the index to the correct column (dates column)
-df = pd.read_csv('example_plot.csv', parse_dates = True, index_col = 0)
+df = pd.read_csv('./data/example_plot.csv', parse_dates = True, index_col = 0)
 
 # Create the plot (with exception handling)
 try:
@@ -35,7 +35,8 @@ except Exception as e:
 #       https://stackoverflow.com/questions/9012487/matplotlib-pyplot-savefig-outputs-blank-image
 
 # Save the created graph
-plt.savefig('utils_plot_example.png')
+plt.savefig('./figures/utils_plot_example.png')
+print('- Graph ./figures/utils_plot_example.png saved.')
 
 # Show the created graph
 plt.show()
