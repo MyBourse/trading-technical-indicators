@@ -5,7 +5,7 @@ with open('README.md', 'r') as fh:
 
 setuptools.setup(
     name = 'trading-technical-indicators',
-    version = '1.0',
+    version = '1.0.5',
     author= 'Vasileios Saveris',
     author_email = 'vsaveris@gmail.com',
     description = 'Trading Technical Indicators, Open Source Library, in Python',
@@ -19,4 +19,8 @@ setuptools.setup(
         'Operating System :: OS Independent',
     ],
     python_requires = '>=3.6',
+    install_requires=[
+          'pandas',
+          'matplotlib'
+      ]
 )

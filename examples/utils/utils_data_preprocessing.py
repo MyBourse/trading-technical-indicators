@@ -14,8 +14,7 @@ Python Version: 3.6
 '''
 
 import pandas as pd
-import tradingti.utils.plot as plot
-import tradingti.utils.data_preprocessing as dp
+from tradingti.utils import lineGraph, fillMissingValues
 from pandas.plotting import register_matplotlib_converters
 
 # Converters used in parsing the dates from csv
@@ -29,10 +28,10 @@ for data_file in ['example_data_missing_1.csv', 'example_data_missing_2.csv',
         date_parser = lambda x: pd.datetime.strptime(x, '%y/%m/%d'))
 
     # Create a dataframe with original and modified values, for plotting the changes
-    df = pd.concat([df, dp.fillMissingValues(df)], axis = 1)
+    df = pd.concat([df, fillMissingValues(df)], axis = 1)
     df.columns=['Before','After']
 
-    graph = plot.lineGraph(data = df, title = 'Fill Missing Values', x_label = 'Date', y_label = 'Value in $')
+    graph = lineGraph(data = df, title = 'Fill Missing Values', x_label = 'Date', y_label = 'Value in $')
     graph.savefig('./figures/' + data_file.split('.')[0] + '.png')
     graph.clf()
     
