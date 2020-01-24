@@ -1,7 +1,6 @@
 '''
-File name: __init__.py
-    Trading Technical Indicators open source library, in python.
-    `support_resistance` package.
+File name: _technical_indicator.py
+    Momentum technical indicators implementation.
            
 Author: Vasileios Saveris
 enail: vsaveris@gmail.com

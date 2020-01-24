@@ -1,7 +1,6 @@
 '''
-File name: __init__.py
-    Trading Technical Indicators open source library, in python.
-    `volatility` package.
+File name: _technical_indicator.py
+    Volatility technical indicators implementation.
            
 Author: Vasileios Saveris
 enail: vsaveris@gmail.com

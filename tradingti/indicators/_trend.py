@@ -1,7 +1,6 @@
 '''
-File name: __init__.py
-    Trading Technical Indicators open source library, in python.
-    `volume` package.
+File name: _technical_indicator.py
+    Trend technical indicators implementation.
            
 Author: Vasileios Saveris
 enail: vsaveris@gmail.com

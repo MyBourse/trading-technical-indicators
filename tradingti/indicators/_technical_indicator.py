@@ -1,7 +1,6 @@
 '''
-File name: __init__.py
-    Trading Technical Indicators open source library, in python.
-    `momentum` package.
+File name: _technical_indicator.py
+    Parent class for all the technical indicators.
            
 Author: Vasileios Saveris
 enail: vsaveris@gmail.com
