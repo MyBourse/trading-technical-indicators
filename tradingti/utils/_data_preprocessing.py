@@ -1,7 +1,6 @@
 '''
-File name: data_preprocessing.py
-    Data preprocessing methods defined under the tradingti.utils. 
-    data_preprocessing module.
+File name: _data_preprocessing.py
+    Data preprocessing methods defined under the tradingti.utils package.
            
 Author: Vasileios Saveris
 enail: vsaveris@gmail.com

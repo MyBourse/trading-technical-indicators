@@ -1,6 +1,6 @@
 '''
-File name: plot.py
-    Plotting methods defined under the tradingti.utils.plot module.
+File name: _plot.py
+    Plotting methods defined under the tradingti.utils package.
            
 Author: Vasileios Saveris
 enail: vsaveris@gmail.com
@@ -13,7 +13,7 @@ Python Version: 3.6
 '''
 
 import matplotlib.pyplot as plt
-import pandas.core as pc
+from ._data_validation import validateDataframe
 
 '''
 Constants
@@ -21,7 +21,7 @@ Constants
 C_DEFAULT_COLORS_PALETTE = ['rosybrown', 'firebrick', 'olivedrab']
 
 
-def lineGraph(data, title = 'Untitled Graph', x_label = 'Date', y_label = 'No Label', 
+def lineGraph(data, title = 'Untitled Graph', x_label = 'Date', y_label = 'Price', 
     colors_palette = C_DEFAULT_COLORS_PALETTE):
     '''
     Returns a lines graph of type matplotlib.pyplot.
@@ -33,13 +33,13 @@ def lineGraph(data, title = 'Untitled Graph', x_label = 'Date', y_label = 'No La
             Each column of the dataframe represents a line in the graph.
             
         title (string): The title on the top of the graph. Default value is 
-            an empty string.
+            `Untitled Graph`.
             
         x_label (string): The label of the x-axis of the graph. Default value
-            is an empty string.
+            is `Date`.
             
         y_label (string): The label of the y-axis of the graph. Default value
-            is an empty string.
+            is `Price`.
             
         colors_palette (list of matplotlib.colors): The colors to be used for
             each line of the graph, in the defined order. In case where the lines 
@@ -53,25 +53,17 @@ def lineGraph(data, title = 'Untitled Graph', x_label = 'Date', y_label = 'No La
         matplotlib.pyplot: The prepared graph object.
     '''
 
-    # Validate that the data argumnet is a pandas dataframe object
-    if not isinstance(data, pc.frame.DataFrame):
-        message = 'The \'data\' argument of the \'lineGraph\' method should ' +\
-            'be of type pandas.core.frame.DataFrame but it is of type '       +\
-            str(type(data)) + '.'
-        raise(TypeError(message))
-    
-    # Validate that the index of the pandas dataframe is a date
-    if not isinstance(data.index, pc.indexes.datetimes.DatetimeIndex):
-        message = 'The index of the \'data\' dataframe argument of the '     +\
-            '\'lineGraph\' method should be of type '                        +\
-            'pandas.core.indexes.datetimes.DatetimeIndex but it is of type ' +\
-            str(type(data.index)) + '.'
-        raise(TypeError(message))
+    # Validate that the data argumnet is a pandas dataframe object and that the
+    # index is a date type.
+    validation_result = validateDataframe(data)
+    if validation_result is not None:
+        raise(TypeError(validation_result))
     
     # Set graph attributes
     plt.title(title, fontsize = 11, fontweight = 'bold')
     plt.xlabel(x_label, fontsize = 11, fontweight = 'bold') 
     plt.ylabel(y_label, fontsize = 11, fontweight = 'bold')
+    plt.grid(which = 'major', axis = 'y', alpha = 0.5)
     
     # Add the lines
     i = 0 # Used for colors use in rotation

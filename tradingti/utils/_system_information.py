@@ -1,6 +1,7 @@
 '''
 File name: _system_information.py
-    Prints system information. Adapted from `sklearn.utils._show_versions`
+    Prints system information, defined under the 
+    tradingti.utils package.
            
 Author: Vasileios Saveris
 enail: vsaveris@gmail.com
