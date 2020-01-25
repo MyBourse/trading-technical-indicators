@@ -9,7 +9,7 @@ $python utils_plot.py
 ```
 
 The script generates a plot of an input stock price data.
-![](/figures/utils_plot_example.png?raw=true)
+![](./figures/utils_plot_example.png?raw=true)
 
 
 ### _data_preprocessing module examples
@@ -21,13 +21,13 @@ $python utils_data_preprocessing.py
 The script fills the missing values for three different input data:
 
 #### Missing data at the begining of the period 
-![](/figures/example_data_missing_1.png?raw=true)
+![](./figures/example_data_missing_1.png?raw=true)
 
 #### Missing data at the end of the period 
-![](/figures/example_data_missing_2.png?raw=true)
+![](./figures/example_data_missing_2.png?raw=true)
 
 #### Missing data in multiple places in the period 
-![](/figures/example_data_missing_3.png?raw=true)
+![](./figures/example_data_missing_3.png?raw=true)
 
 
 ## Prerequisites
