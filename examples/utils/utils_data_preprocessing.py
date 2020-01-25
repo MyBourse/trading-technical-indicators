@@ -1,6 +1,6 @@
 '''
 File name: utils_data_preprocessing.py
-    Example code rlated to the tradingti.utils.data_preprocessing
+    Example code rlated to the tradingti.utils._data_preprocessing
     module.
            
 Author: Vasileios Saveris
@@ -31,7 +31,7 @@ for data_file in ['example_data_missing_1.csv', 'example_data_missing_2.csv',
     df = pd.concat([df, fillMissingValues(df)], axis = 1)
     df.columns=['Before','After']
 
-    graph = lineGraph(data = df, title = 'Fill Missing Values', x_label = 'Date', y_label = 'Value in $')
+    graph = lineGraph(data = df, title = 'Fill Missing Values')
     graph.savefig('./figures/' + data_file.split('.')[0] + '.png')
     graph.clf()
     
