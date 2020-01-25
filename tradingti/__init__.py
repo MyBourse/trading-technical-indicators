@@ -16,6 +16,7 @@ Python Version: 3.6
 # PEP0440: https://www.python.org/dev/peps/pep-0440/
 __version__ = '0.1.dev'
 
+from ._constants import *
 from .utils._system_information import showVersions
 
-__all__ = ['utils', 'indicators']
+__all__ = ['utils', 'indicators', 'TRADE_SIGNALS']
