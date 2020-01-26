@@ -8,11 +8,11 @@ enail: vsaveris@gmail.com
 
 License: MIT
 
-Date last modified: 22.01.2020
+Date last modified: 26.01.2020
 
 Python Version: 3.6
 '''
 
-from ._trend import SMA
+from ._trend import SMA, EMA
 
-__all__ = ['SMA']
+__all__ = ['SMA', 'EMA']

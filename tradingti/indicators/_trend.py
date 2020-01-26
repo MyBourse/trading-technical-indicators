@@ -1,13 +1,16 @@
 '''
 File name: _technical_indicator.py
     Trend type technical indicators implementation.
+    Implements the following technical indicators:
+    - Simple Moving Average (SMA class)
+    - Exponential Moving Average (EMA class)
            
 Author: Vasileios Saveris
 enail: vsaveris@gmail.com
 
 License: MIT
 
-Date last modified: 22.01.2020
+Date last modified: 26.01.2020
 
 Python Version: 3.6
 '''
@@ -206,6 +209,211 @@ class SMA(TI):
                 
                 direction = self._ti_data.at[self._ti_data.index[-1], 'SMA-' + str(short_term_SMA)] - \
                             self._ti_data.at[self._ti_data.index[-1], 'SMA-' + str(long_term_SMA)]
+                            
+                if direction > 0:
+                    short_term_signal = TRADE_SIGNALS['Buy']
+                elif direction < 0:
+                    short_term_signal = TRADE_SIGNALS['Sell']
+            else:
+                short_term_signal = TRADE_SIGNALS['Hold']
+                            
+            # Merge signals.
+            signal = long_term_signal + short_term_signal
+            
+            # Normalize signal if needed
+            if abs(signal) == 2:
+                signal = signal / 2
+ 
+        return signal
+        
+        
+class EMA(TI):
+    '''
+    EMA Technical Indicator class implementation.
+
+    Args:
+        df_data (pandas dataframe): The input data to the Technical Indicator.
+            Index is of type date. It contains one column with the Adjusted
+            Closed price of a given stock.
+                
+        span_periods (object): The span periods from which the decay is calculated.
+            Is a list of integers, with one (representing the long term EMA) or two 
+            (representing the short term and the long term EMA) members at most. 
+            Default values are [26, 200], 26 for the short term and 200 for the long 
+            term.
+
+    Attributes:
+        _input_data (pandas dataframe): The input data to the Technical Indicator.
+            
+        _ti_data (pandas dataframe): The calculated values of the Technical
+            indicator.
+            
+        _span_periods (list of integers): The span periods.
+                                
+    Methods:
+        _inputValidation(): Validates the input to the EMA Technical Indicator data.
+    
+        _calculateEMA(): Calculates the EMA for the given input data.
+    
+        getSignal(): Calculates and returns the signal of the technical indicator.
+        
+    Raises:
+        TypeError()
+        
+    '''
+    def __init__(self, df_data, span_periods = [26, 200]):
+
+        # Validate the input data, check tradingti.utils._data_validation module
+        # for details
+        data_validation = validateStockData(df_data)
+        if data_validation is not None:
+            raise(TypeError(data_validation))
+            
+        # Sort the input data and fill the missing values if any
+        df_data = fillMissingValues(df_data)
+        
+        # Validate the EMA input (specific to the indicator)
+        self._inputValidation(df_data, span_periods)
+        
+        if len(span_periods) == 1:
+            colors_palette = ['rosybrown', 'g']
+        else:
+            colors_palette = ['rosybrown', 'g', 'royalblue']
+            
+        # If contains only one member, this is considered as long term EMA
+        # If contains two members, then the larger value is considered as the long term EMA
+        # and the shorter one is considered as the short term EMA
+        self._span_periods = span_periods
+        
+        self._input_data = df_data
+        self._ti_data = self._calculateEMA()
+        
+        # Parent class constructor (all job is done here, parent class provides the public
+        # interface for accessing the data of the indicator)
+        super().__init__(input_data = self._input_data, ti_data = self._ti_data, 
+            indicator_name = 'EMA-' + str(span_periods), 
+            colors_palette = colors_palette)
+        
+    
+    def _inputValidation(self, df_data, span_periods):
+        '''
+        Validates the input to the EMA Technical Indicator data.
+    
+        Args:
+            df_data (pandas dataframe): The input data to the Technical Indicator.
+                Index is of type date. It contains one column with the Adjusted
+                Closed price of a given stock.
+                
+            span_periods (list of integers): The span periods from which the decay
+                is calculated. Should be a list of integers, with one or two members
+                at most.
+
+        Raises:
+            TypeError()
+            ValueError()
+
+        Returns:
+            -
+        '''
+        
+        # Validate that the span_periods is a list
+        if not isinstance(span_periods, list):
+            message = 'span_periods must be a list of one or two positive integers. '+\
+                'span_periods_type = ' + str(type(span_periods)) + '.'          
+            raise(TypeError(message))
+        
+        # Validate that the span_periods is valid (not empty list of postive integers)
+        if len(span_periods) == 0 or len(span_periods) > 2:
+            message = 'span_periods must contain one or two positive integers with values' +\
+                'less than the number of the input data points. '+\
+                'span_periods = ' + str(span_periods) + ' contains ' + str(len(span_periods)) + '.'           
+            raise(ValueError(message))
+            
+        for span_period in span_periods:
+            if not isinstance(span_period, int) or span_period <= 0:
+                message = 'span_periods must contain only positive integers. '+\
+                    'span_periods = ' + str(span_periods) + ', ' + str(span_period) +\
+                    ' is not a valid positive integer.' 
+                raise ValueError(message)
+        
+        # Validate that span_period is less than the number of the data points
+        for span_period in span_periods:
+            if len(df_data.index) < span_period:
+                message = 'span_period should be less than the number of the data points.'+\
+                    ' span_period = ' + str(span_period) + ' < ' + str(len(df_data.index)) + '.'
+                raise(ValueError(message))
+                
+    
+    def _calculateEMA(self):
+        '''
+        Calculates the EMA for the given input data.
+    
+        Args:
+            -
+
+        Raises:
+            -
+
+        Returns:
+            pandas dataframe: The calculated values of the Technical
+                indicator. Index is of type date. It contains one or two
+                columns depending the requested ema periods.
+        '''
+    
+        ema = pd.DataFrame(index = self._input_data.index)
+        
+        # Calculate EMA for each requested span period (concat results to a single dataframe)
+        for span_period in self._span_periods:
+            ema = pd.concat([ema, self._input_data.ewm(span = span_period,
+                min_periods = 0, adjust = True, axis = 0).mean()], axis = 1)
+        
+        ema.columns = ['EMA-' + str(x) for x in self._span_periods]
+            
+        return ema
+
+    
+    def getSignal(self):
+        '''
+        Calculates and returns the signal of the technical indicator.
+    
+        Args:
+            -
+
+        Raises:
+            -
+
+        Returns:
+            integer: The Trading signal. Possible values are {'Hold': 0, 
+                'Buy': -1, 'Sell': 1}. See TRADE_SIGNALS package constant.
+        '''
+
+        # Signal from long term EMA
+        long_term_EMA = max(self._span_periods)
+        
+        # Prices crosses the long term EMA
+        if (self._input_data.iat[-2, 0] - self._ti_data.at[self._ti_data.index[-2], 'EMA-' + str(long_term_EMA)]) *\
+           (self._input_data.iat[-1, 0] - self._ti_data.at[self._ti_data.index[-1], 'EMA-' + str(long_term_EMA)]) < 0:
+            
+            direction = self._input_data.iat[-1, 0] - self._ti_data.at[self._ti_data.index[-1], 'EMA-' + str(long_term_EMA)]
+            if direction > 0:
+                long_term_signal = TRADE_SIGNALS['Buy']
+            elif direction < 0:
+                long_term_signal = TRADE_SIGNALS['Sell']
+        else:
+            long_term_signal = TRADE_SIGNALS['Hold']
+        
+        # Signal from short term EMA
+        if len(self._span_periods) > 1:
+            short_term_EMA = min(self._span_periods)
+            
+            # EMAs crosses each other
+            if (self._ti_data.at[self._ti_data.index[-2], 'EMA-' + str(short_term_EMA)] - \
+                self._ti_data.at[self._ti_data.index[-2], 'EMA-' + str(long_term_EMA)]) * \
+               (self._ti_data.at[self._ti_data.index[-1], 'EMA-' + str(short_term_EMA)] - \
+                self._ti_data.at[self._ti_data.index[-1], 'EMA-' + str(long_term_EMA)]) < 0:
+                
+                direction = self._ti_data.at[self._ti_data.index[-1], 'EMA-' + str(short_term_EMA)] - \
+                            self._ti_data.at[self._ti_data.index[-1], 'EMA-' + str(long_term_EMA)]
                             
                 if direction > 0:
                     short_term_signal = TRADE_SIGNALS['Buy']
