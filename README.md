@@ -24,7 +24,7 @@ In release 0.1 the below technical indicators will be included:
 ```
 
 ## Usage Examples
-As the development progress some usage examples are added to the repository:
+As the development progresses some usage examples are added to the repository:
 
 - [Utils package usage examples](https://github.com/vsaveris/trading-technical-indicators/tree/master/examples/utils)
 - [Indicators package usage examples](https://github.com/vsaveris/trading-technical-indicators/tree/master/examples/indicators)
