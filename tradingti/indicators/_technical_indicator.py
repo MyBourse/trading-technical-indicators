@@ -84,7 +84,7 @@ class TI(ABC):
             matplotlib object: The generated plot.
         '''
         
-        return lineGraph(data = pd.concat([self._ti_data, self._input_data], axis = 1), 
+        return lineGraph(data = pd.concat([self._input_data, self._ti_data, ], axis = 1), 
             title = self._indicator_name, colors_palette = self._colors_palette)
 
 

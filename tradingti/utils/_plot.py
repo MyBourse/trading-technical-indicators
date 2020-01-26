@@ -52,7 +52,9 @@ def lineGraph(data, title = 'Untitled Graph', x_label = 'Date', y_label = 'Price
     Returns:
         matplotlib.pyplot: The prepared graph object.
     '''
-
+    
+    plt.clf()
+    
     # Validate that the data argumnet is a pandas dataframe object and that the
     # index is a date type.
     validation_result = validateDataframe(data)

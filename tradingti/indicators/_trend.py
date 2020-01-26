@@ -68,9 +68,9 @@ class SMA(TI):
         self._inputValidation(df_data, sma_periods)
         
         if len(sma_periods) == 1:
-            colors_palette = ['red', 'black']
+            colors_palette = ['rosybrown', 'g']
         else:
-            colors_palette = ['red', 'blue', 'black']
+            colors_palette = ['rosybrown', 'g', 'royalblue']
             
         # If contains only one member, this is considered as long term SMA
         # If contains two members, then the larger value is considered as the long term SMA
