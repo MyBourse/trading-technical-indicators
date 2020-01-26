@@ -47,7 +47,7 @@ The script generates the below plots:
 
 ## Prerequisites
 1. python: `version 3.6` or later
-2. tradingti library: `commit 53c61ca41beb7a273462c7c518f9433846bbcd8d` or later
+2. tradingti library: `commit c6cf9a2010ea01ecaf1056f8596d0093e965d639` or later
 3. matplotlib: `version 3.1.2` or later
 4. pandas: `version 0.25.3` or later
 
