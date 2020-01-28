@@ -14,5 +14,6 @@ Python Version: 3.6
 '''
 
 from ._trend import SMA, EMA
+from ._momentum import FSO, SSO
 
-__all__ = ['SMA', 'EMA']
+__all__ = ['SMA', 'EMA', 'FSO', 'SSO']
