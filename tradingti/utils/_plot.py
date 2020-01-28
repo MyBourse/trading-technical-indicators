@@ -22,7 +22,8 @@ C_DEFAULT_COLORS_PALETTE = ['rosybrown', 'firebrick', 'olivedrab']
 
 
 def lineGraph(data, title = 'Untitled Graph', x_label = 'Date', y_label = 'Price', 
-    colors_palette = C_DEFAULT_COLORS_PALETTE):
+    colors_palette = C_DEFAULT_COLORS_PALETTE, linewidth = None * data.shape[1], linestyle = None * data.shape[1], 
+    alpha = None * data.shape[1]):
     '''
     Returns a lines graph of type matplotlib.pyplot.
     
@@ -45,7 +46,13 @@ def lineGraph(data, title = 'Untitled Graph', x_label = 'Date', y_label = 'Price
             each line of the graph, in the defined order. In case where the lines 
             are more than the colors, then the list is scanned again from the zero
             index.
-
+        
+        linewidth (list of data.shape[1] members):
+        
+        linestyle (list of data.shape[1] members):
+        
+        alpha (list of data.shape[1] members):
+        
     Raises:
         TypeError()
 
