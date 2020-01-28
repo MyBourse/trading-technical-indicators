@@ -22,8 +22,7 @@ C_DEFAULT_COLORS_PALETTE = ['rosybrown', 'firebrick', 'olivedrab']
 
 
 def lineGraph(data, title = 'Untitled Graph', x_label = 'Date', y_label = 'Price', 
-    colors_palette = C_DEFAULT_COLORS_PALETTE, linewidth = None * data.shape[1], linestyle = None * data.shape[1], 
-    alpha = None * data.shape[1]):
+    colors_palette = C_DEFAULT_COLORS_PALETTE, linewidth = [None] * data.shape[1], linestyle = [None] * data.shape[1], alpha = [None] * data.shape[1]):
     '''
     Returns a lines graph of type matplotlib.pyplot.
     
