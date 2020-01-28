@@ -22,7 +22,7 @@ C_DEFAULT_COLORS_PALETTE = ['rosybrown', 'firebrick', 'olivedrab']
 
 
 def lineGraph(data, title = 'Untitled Graph', x_label = 'Date', y_label = 'Price', 
-    colors_palette = C_DEFAULT_COLORS_PALETTE, linewidth = [None] * data.shape[1], linestyle = [None] * data.shape[1], alpha = [None] * data.shape[1]):
+    colors_palette = C_DEFAULT_COLORS_PALETTE, linewidth = [None], linestyle = [None], alpha = [None]:
     '''
     Returns a lines graph of type matplotlib.pyplot.
     
@@ -46,11 +46,11 @@ def lineGraph(data, title = 'Untitled Graph', x_label = 'Date', y_label = 'Price
             are more than the colors, then the list is scanned again from the zero
             index.
         
-        linewidth (list of data.shape[1] members):
+        linewidth (list of floats): float value in points
         
-        linestyle (list of data.shape[1] members):
+        linestyle (list of strings):
         
-        alpha (list of data.shape[1] members):
+        alpha (list of floats): value used for blending
         
     Raises:
         TypeError()
@@ -77,7 +77,7 @@ def lineGraph(data, title = 'Untitled Graph', x_label = 'Date', y_label = 'Price
     i = 0 # Used for colors use in rotation
     for line_name in data.columns.values:
         plt.plot(data.index.values, data[line_name], label = line_name, 
-            color = colors_palette[i % len(colors_palette)])
+            color = colors_palette[i % len(colors_palette)], linewidth = linewidth[i % len(linewidth)], linestyle = linestyle[i % len(linestyle)], alpha = alpha[i % len(alpha)])
         i += 1
     
     plt.legend()
