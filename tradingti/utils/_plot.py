@@ -79,6 +79,9 @@ def lineGraph(data, title = 'Untitled Graph', x_label = 'Date', y_label = 'Price
     plt.xlabel(x_label, fontsize = 11, fontweight = 'bold') 
     plt.ylabel(y_label, fontsize = 11, fontweight = 'bold')
     plt.grid(which = 'major', axis = 'y', alpha = 0.5)
+
+    # To avoid overlapping in x-axis
+    plt.gcf().autofmt_xdate()
     
     # Add the lines
     i = 0 # Used for colors use in rotation
