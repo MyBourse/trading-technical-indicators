@@ -7,7 +7,7 @@ enail: vsaveris@gmail.com
 
 License: MIT
 
-Date last modified: 22.01.2020
+Date last modified: 29.01.2020
 
 Python Version: 3.6
 '''
@@ -15,14 +15,10 @@ Python Version: 3.6
 import matplotlib.pyplot as plt
 from ._data_validation import validateDataframe
 
-'''
-Constants
-'''
-C_DEFAULT_COLORS_PALETTE = ['rosybrown', 'firebrick', 'olivedrab']
-
 
 def lineGraph(data, title = 'Untitled Graph', x_label = 'Date', y_label = 'Price', 
-    colors_palette = C_DEFAULT_COLORS_PALETTE, linewidth = [None], linestyle = [None], alpha = [None]:
+    lines_color = [None], lines_width = [None], lines_style = [None],
+    alpha_values = [None]):
     '''
     Returns a lines graph of type matplotlib.pyplot.
     
@@ -41,16 +37,27 @@ def lineGraph(data, title = 'Untitled Graph', x_label = 'Date', y_label = 'Price
         y_label (string): The label of the y-axis of the graph. Default value
             is `Price`.
             
-        colors_palette (list of matplotlib.colors): The colors to be used for
+        lines_color (list of matplotlib.colors): The colors to be used for
             each line of the graph, in the defined order. In case where the lines 
             are more than the colors, then the list is scanned again from the zero
             index.
         
-        linewidth (list of floats): float value in points
+        lines_width (list of floats): Width of each line, to be used in the call
+            of the matplotlib.pyplot.plot method. In case where the lines 
+            are more than the members of the list, then the list is scanned again 
+            from the zero index.
         
-        linestyle (list of strings):
+        lines_style (list of strings): Style of each line, to be used in the call
+            of the matplotlib.pyplot.plot method. In case where the lines 
+            are more than the members of the list, then the list is scanned again 
+            from the zero index. See: 
+            https://matplotlib.org/gallery/lines_bars_and_markers/linestyles.html 
+            for possible values.
         
-        alpha (list of floats): value used for blending
+        alpha_values (list of floats): Alpha value of each line, to be used in the call
+            of the matplotlib.pyplot.plot method. In case where the lines 
+            are more than the members of the list, then the list is scanned again 
+            from the zero index.
         
     Raises:
         TypeError()
@@ -77,7 +84,9 @@ def lineGraph(data, title = 'Untitled Graph', x_label = 'Date', y_label = 'Price
     i = 0 # Used for colors use in rotation
     for line_name in data.columns.values:
         plt.plot(data.index.values, data[line_name], label = line_name, 
-            color = colors_palette[i % len(colors_palette)], linewidth = linewidth[i % len(linewidth)], linestyle = linestyle[i % len(linestyle)], alpha = alpha[i % len(alpha)])
+            color = lines_color[i % len(lines_color)], linewidth = lines_width[i % len(lines_width)], 
+            linestyle = lines_style[i % len(lines_style)], alpha = alpha_values[i % len(alpha_values)])
+            
         i += 1
     
     plt.legend()

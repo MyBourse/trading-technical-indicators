@@ -33,7 +33,7 @@ class AverageTI(TI):
         
         indicator_name (string): The name of the Technical Indicator.
         
-        colors_palette (list of matplotlib colors): The colors to be used
+        lines_color (list of matplotlib colors): The colors to be used
             when generating the plot for a Technical Indicator. Default value is
             None (default colors will be used).
                 
@@ -63,7 +63,7 @@ class AverageTI(TI):
         
     '''
     
-    def __init__(self, df_data, calculate_MA, indicator_name, colors_palette,
+    def __init__(self, df_data, calculate_MA, indicator_name, lines_color,
         periods):
 
         # Validate the input data, check tradingti.utils._data_validation module
@@ -91,7 +91,7 @@ class AverageTI(TI):
         # Parent class constructor (all job is done here, parent class provides the public
         # interface for accessing the data of the indicator)
         super().__init__(input_data = self._input_data, ti_data = self._ti_data, 
-            indicator_name = indicator_name, colors_palette = colors_palette)
+            indicator_name = indicator_name, lines_color = lines_color)
         
     
     def _inputValidation(self, df_data, periods):

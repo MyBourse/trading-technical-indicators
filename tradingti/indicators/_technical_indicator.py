@@ -34,7 +34,7 @@ class TI(ABC):
                 
         indicator_name (string): The name of the Technical Indicator.
                 
-        colors_palette (list of matplotlib colors): The colors to be used
+        lines_color (list of matplotlib colors): The colors to be used
             when generating the plot for a Technical Indicator. Default value is
             None (default colors will be used).
 
@@ -46,7 +46,7 @@ class TI(ABC):
                 
         _indicator_name (string): The name of the Technical Indicator.
                 
-        _colors_palette (list of matplotlib colors): The colors to be used
+        _lines_color (list of matplotlib colors): The colors to be used
             when generating the plot for a Technical Indicator.
                                 
     Methods:
@@ -61,12 +61,12 @@ class TI(ABC):
     
     '''
     def __init__(self, input_data, ti_data, indicator_name,
-        colors_palette = None):
+        lines_color = None):
 
         self._input_data = input_data
         self._ti_data = ti_data
         self._indicator_name = indicator_name
-        self._colors_palette = colors_palette
+        self._lines_color = lines_color
         
         
     def getTiPlot(self):
@@ -85,7 +85,7 @@ class TI(ABC):
         '''
         
         return lineGraph(data = pd.concat([self._input_data, self._ti_data, ], axis = 1), 
-            title = self._indicator_name, colors_palette = self._colors_palette)
+            title = self._indicator_name, lines_color = self._lines_color)
 
 
     def getTiData(self):

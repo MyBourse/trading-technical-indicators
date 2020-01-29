@@ -7,7 +7,7 @@ enail: vsaveris@gmail.com
 
 License: MIT
 
-Date last modified: 22.01.2020
+Date last modified: 29.01.2020
 
 Python Version: 3.6
 '''
@@ -24,7 +24,8 @@ df = pd.read_csv('./data/example_plot.csv', parse_dates = True, index_col = 0)
 
 # Create the plot (with exception handling)
 try:
-    plt = lineGraph(data = df[['Adj Close']], title = 'Example Graph')
+    plt = lineGraph(data = df[['Adj Close']], title = 'Example Graph', 
+        lines_color = ['rosybrown'])
     
     # Note: Special handling is needed when you call first plt.show() and then
     #       the plt.savefig() for the same figure. See: 

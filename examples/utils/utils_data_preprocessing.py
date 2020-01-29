@@ -28,10 +28,13 @@ for data_file in ['example_data_missing_1.csv', 'example_data_missing_2.csv',
         date_parser = lambda x: pd.datetime.strptime(x, '%y/%m/%d'))
 
     # Create a dataframe with original and modified values, for plotting the changes
-    df = pd.concat([df, fillMissingValues(df)], axis = 1)
-    df.columns=['Before','After']
+    df = pd.concat([fillMissingValues(df), df], axis = 1)
+    df.columns=['After', 'Before']
 
-    graph = lineGraph(data = df, title = 'Fill Missing Values')
+    graph = lineGraph(data = df, title = 'Fill Missing Values', 
+        lines_color = ['firebrick', 'rosybrown'], lines_style = ['--', '-'],
+        lines_width = [1, 1.5])
+        
     graph.savefig('./figures/' + data_file.split('.')[0] + '.png')
     graph.clf()
     

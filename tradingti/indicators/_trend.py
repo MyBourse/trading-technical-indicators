@@ -49,13 +49,13 @@ class SMA(AverageTI):
         self._sma_periods = sma_periods
         
         if len(sma_periods) == 1:
-            colors_palette = ['rosybrown', 'g']
+            lines_color = ['rosybrown', 'g']
         else:
-            colors_palette = ['rosybrown', 'g', 'royalblue']
+            lines_color = ['rosybrown', 'g', 'royalblue']
         
         super().__init__(df_data = df_data, calculate_MA = self._calculateSMA,
             indicator_name = 'SMA-' + str(sma_periods), 
-            colors_palette = colors_palette, periods = sma_periods)
+            lines_color = lines_color, periods = sma_periods)
         
     
     def _calculateSMA(self, input_data):
@@ -117,13 +117,13 @@ class EMA(AverageTI):
         self._span_periods = span_periods
 
         if len(span_periods) == 1:
-            colors_palette = ['rosybrown', 'g']
+            lines_color = ['rosybrown', 'g']
         else:
-            colors_palette = ['rosybrown', 'g', 'royalblue']
+            lines_color = ['rosybrown', 'g', 'royalblue']
         
         super().__init__(df_data = df_data, calculate_MA = self._calculateEMA,
             indicator_name = 'EMA-' + str(span_periods),
-            colors_palette = colors_palette, periods = span_periods)
+            lines_color = lines_color, periods = span_periods)
         
     
     def _calculateEMA(self, input_data):
