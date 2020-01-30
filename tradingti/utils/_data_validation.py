@@ -35,15 +35,13 @@ def validateDataframe(data):
 
     # Validate that the data argumnet is a pandas dataframe object
     if not isinstance(data, pc.frame.DataFrame):
-        return 'The \'data\' argument of the \'lineGraph\' method should ' +\
-            'be of type pandas.core.frame.DataFrame but it is of type '    +\
-            str(type(data)) + '.'
+        return 'The argument should be of type pandas.core.frame.DataFrame '+\
+            'but it is of type ' + str(type(data)) + '.'
 
     # Validate that the index of the pandas dataframe is a date
     if not isinstance(data.index, pc.indexes.datetimes.DatetimeIndex):
-        return 'The index of the \'data\' dataframe argument of the '        +\
-            '\'lineGraph\' method should be of type '                        +\
-            'pandas.core.indexes.datetimes.DatetimeIndex but it is of type ' +\
+        return 'The index of the dataframe argument should be of type '     +\
+            'pandas.core.indexes.datetimes.DatetimeIndex but it is of type '+\
             str(type(data.index)) + '.'
     
     return None

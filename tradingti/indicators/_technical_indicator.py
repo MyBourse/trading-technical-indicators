@@ -14,7 +14,7 @@ Python Version: 3.6
 
 from abc import ABC, abstractmethod
 import pandas as pd
-from ..utils import lineGraph
+from ..utils import lineGraph, verticalLineSubplots
 
 
 class TI(ABC):
@@ -37,6 +37,9 @@ class TI(ABC):
         lines_color (list of matplotlib colors): The colors to be used
             when generating the plot for a Technical Indicator. Default value is
             None (default colors will be used).
+            
+        subplots (boolean): Indicates if the technical indicator graph should
+            contain subplots.
 
     Attributes:
         _input_data (pandas dataframe): The input to the Technical Indicator.
@@ -48,6 +51,9 @@ class TI(ABC):
                 
         _lines_color (list of matplotlib colors): The colors to be used
             when generating the plot for a Technical Indicator.
+            
+        _subplots (boolean): Indicates if the technical indicator graph should
+            contain subplots.
                                 
     Methods:
         getTiPlot(): Generates a plot including the input data and the technical 
@@ -61,12 +67,13 @@ class TI(ABC):
     
     '''
     def __init__(self, input_data, ti_data, indicator_name,
-        lines_color = None):
+        lines_color = None, subplots = False):
 
         self._input_data = input_data
         self._ti_data = ti_data
         self._indicator_name = indicator_name
         self._lines_color = lines_color
+        self._subplots = subplots
         
         
     def getTiPlot(self):
@@ -84,8 +91,12 @@ class TI(ABC):
             matplotlib object: The generated plot.
         '''
         
-        return lineGraph(data = pd.concat([self._input_data, self._ti_data, ], axis = 1), 
-            title = self._indicator_name, lines_color = self._lines_color)
+        if self._subplots:
+            return verticalLineSubplots(data_list = [self._input_data.to_frame(), self._ti_data], 
+                title = self._indicator_name, lines_color = self._lines_color)
+        else:
+            return lineGraph(data = pd.concat([self._input_data, self._ti_data, ], axis = 1), 
+                title = self._indicator_name, lines_color = self._lines_color)
 
 
     def getTiData(self):
