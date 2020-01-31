@@ -71,6 +71,11 @@ class AverageTI(TI):
         data_validation = validateStockData(df_data)
         if data_validation is not None:
             raise(TypeError(data_validation))
+        
+        # Validate that all required input data are available
+        if 'Adj Close' not in df_data.columns:
+            raise(ValueError('Input \'Adj Close\' data are missing for MA indicator use. '+\
+                'Mandatory input data are: \'Adj Close\'.'))
             
         # Sort the input data and fill the missing values if any
         df_data = fillMissingValues(df_data)

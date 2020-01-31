@@ -50,9 +50,10 @@ def validateDataframe(data):
 def validateStockData(data):
     '''
     Validates that the data argument is a pandas data frame, that its index
-    is of type date, that it is not empty and that it holds just one column
-    of type numeric.
-    
+    is of type date, that it is not empty and that it holds columns (at least
+    one) of type numeric with columns name one of the following: ['Open', 'High', 
+    'Low', 'Close', 'Volume', 'Adj Close'].
+
     Args:
         data (object): Input object to be validated.
 
@@ -72,9 +73,15 @@ def validateStockData(data):
     if data.empty:
         return 'The input data cannot be empty. data_len = ' + str(len(data.index)) + '.'
    
-    # Validate that the data frame holds a single column of numeric type (price)
-    if len(data.columns) != 1 or not is_numeric_dtype(data[data.columns[0]]):
-        return 'The input data frame must hold a single column of numeric type. ' +\
-            'columns_number = ' + str(len(data.columns)) + ', is_numeric = '      +\
-            str(is_numeric_dtype(data[data.columns[0]])) + '.'
+    # Validate that the data frame holds columns of numeric type (price) and that 
+    # they have one of the expected column names.
+    for column in data.columns:
+        if not is_numeric_dtype(data[column]):
+            return 'The input data frame must hold a columns of numeric type. '+\
+                'column = ' + column + ', is_numeric = '+\
+                str(is_numeric_dtype(data[column])) + '.'
+        if column not in ['Open', 'High', 'Low', 'Close', 'Volume', 'Adj Close']:
+            return 'Invalid column name in the dataframe. '+\
+                'column = ' + column + ', expected_names = '+\
+                '[\'Open\', \'High\', \'Low\', \'Close\', \'Volume\', \'Adj Close\'].'            
             
