@@ -12,7 +12,7 @@ Date last modified: 29.01.2020
 Python Version: 3.6
 '''
 
-from tradingti.utils import lineGraph
+from tradingti.utils import linesGraph
 import pandas as pd
 from pandas.plotting import register_matplotlib_converters
 
@@ -24,7 +24,7 @@ df = pd.read_csv('./data/example_plot.csv', parse_dates = True, index_col = 0)
 
 # Create the plot (with exception handling)
 try:
-    plt = lineGraph(data = df[['Adj Close']], title = 'Example Graph', 
+    plt = linesGraph(data = df[['Adj Close']], title = 'Example Graph', 
         lines_color = ['rosybrown'])
     
     # Note: Special handling is needed when you call first plt.show() and then

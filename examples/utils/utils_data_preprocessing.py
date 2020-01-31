@@ -14,7 +14,7 @@ Python Version: 3.6
 '''
 
 import pandas as pd
-from tradingti.utils import lineGraph, fillMissingValues
+from tradingti.utils import linesGraph, fillMissingValues
 from pandas.plotting import register_matplotlib_converters
 
 # Converters used in parsing the dates from csv
@@ -31,7 +31,7 @@ for data_file in ['example_data_missing_1.csv', 'example_data_missing_2.csv',
     df = pd.concat([fillMissingValues(df), df], axis = 1)
     df.columns=['After', 'Before']
 
-    graph = lineGraph(data = df, title = 'Fill Missing Values', 
+    graph = linesGraph(data = df, title = 'Fill Missing Values', 
         lines_color = ['firebrick', 'rosybrown'], lines_style = ['--', '-'],
         lines_width = [1, 1.5])
         
