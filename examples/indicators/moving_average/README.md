@@ -9,8 +9,8 @@ The `_trend` module defined under the `tradingti.indicators` package implements 
 ```
 $python indicators_sma.py
 
-- Graph ./figures/indicators_sma_200_example.png saved.
-- Graph ./figures/indicators_sma_50_200_example.png saved.
+- Graph ../figures/indicators_sma_200_example.png saved.
+- Graph ../figures/indicators_sma_50_200_example.png saved.
 
 SMA data:
                  SMA-50     SMA-200
@@ -39,17 +39,17 @@ Signal: Hold [ 0 ]
 The script generates the below plots:
 
 ##### SMA-200
-![](./figures/indicators_sma_200_example.png?raw=true)
+![](../figures/indicators_sma_200_example.png?raw=true)
 
 ##### SMA-200 and SMA-50
-![](./figures/indicators_sma_50_200_example.png?raw=true)
+![](../figures/indicators_sma_50_200_example.png?raw=true)
 
 ### EMA Technical Indicator example
 ```
 $python python indicators_ema.py
 
-- Graph ./figures/indicators_ema_200_example.png saved.
-- Graph ./figures/indicators_ema_50_200_example.png saved.
+- Graph ../figures/indicators_ema_200_example.png saved.
+- Graph ../figures/indicators_ema_50_200_example.png saved.
 
 EMA data:
                  EMA-26     EMA-200
@@ -78,10 +78,10 @@ Signal: Hold [ 0 ]
 The script generates the below plots:
 
 ##### EMA-200
-![](./figures/indicators_ema_200_example.png?raw=true)
+![](../figures/indicators_ema_200_example.png?raw=true)
 
 ##### EMA-200 and EMA-50
-![](./figures/indicators_ema_50_200_example.png?raw=true)
+![](../figures/indicators_ema_50_200_example.png?raw=true)
 
 
 ## Prerequisites

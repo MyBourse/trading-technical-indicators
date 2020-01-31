@@ -22,22 +22,22 @@ from tradingti.indicators import SMA
 import tradingti as tti
 
 # Read data from csv file. Set the index to the correct column (dates column)
-df = pd.read_csv('./data/sample_data.csv', parse_dates = True, index_col = 0)
+df = pd.read_csv('../data/sample_data.csv', parse_dates = True, index_col = 0)
 
 # Calculate the SMA indicator for sma period = 200
 sma = SMA(df[['Adj Close']], sma_periods = [200])
 
 # Save the plot of the calculated Technical Indicator
-sma.getTiPlot().savefig('./figures/indicators_sma_200_example.png')
-print('- Graph ./figures/indicators_sma_200_example.png saved.')
+sma.getTiPlot().savefig('../figures/indicators_sma_200_example.png')
+print('- Graph ../figures/indicators_sma_200_example.png saved.')
 
 # Calculate the SMA indicator for the default sma periods (short term sma = 50,
 # long term sma = 200) 
 sma = SMA(df[['Adj Close']])
 
 # Save the plot of the calculated Technical Indicator
-sma.getTiPlot().savefig('./figures/indicators_sma_50_200_example.png')
-print('- Graph ./figures/indicators_sma_50_200_example.png saved.')
+sma.getTiPlot().savefig('../figures/indicators_sma_50_200_example.png')
+print('- Graph ../figures/indicators_sma_50_200_example.png saved.')
 
 # Get SMA calculated data
 print('\nSMA data:\n', sma.getTiData())

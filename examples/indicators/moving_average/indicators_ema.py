@@ -22,23 +22,23 @@ from tradingti.indicators import EMA
 import tradingti as tti
 
 # Read data from csv file. Set the index to the correct column (dates column)
-df = pd.read_csv('./data/sample_data.csv', parse_dates = True, index_col = 0)
+df = pd.read_csv('../data/sample_data.csv', parse_dates = True, index_col = 0)
 
 # Calculate the EMA indicator for span period = 200
 ema = EMA(df[['Adj Close']], span_periods = [200])
 
 # Save the plot of the calculated Technical Indicator
-ema.getTiPlot().savefig('./figures/indicators_ema_200_example.png')
+ema.getTiPlot().savefig('../figures/indicators_ema_200_example.png')
 
-print('- Graph ./figures/indicators_ema_200_example.png saved.')
+print('- Graph ../figures/indicators_ema_200_example.png saved.')
 
 # Calculate the EMA indicator for the default span periods (short term ema = 26,
 # long term ema = 200) 
 ema = EMA(df[['Adj Close']])
 
 # Save the plot of the calculated Technical Indicator
-ema.getTiPlot().savefig('./figures/indicators_ema_50_200_example.png')
-print('- Graph ./figures/indicators_ema_50_200_example.png saved.')
+ema.getTiPlot().savefig('../figures/indicators_ema_50_200_example.png')
+print('- Graph ../figures/indicators_ema_50_200_example.png saved.')
 
 # Get EMA calculated data
 print('\nEMA data:\n', ema.getTiData())
