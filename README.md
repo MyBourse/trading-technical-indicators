@@ -14,8 +14,8 @@ In release 0.1 the below technical indicators will be included:
  3. Fast Stochastic oscillator (FSO) -- Status: Done
  4. Slow Stochastic oscillator (SSO) -- Status: Done
  5. Moving average convergence divergence (MACD) -- Status: Done
- 6. Bollinger bands  -- Status: Under Development
- 7. Relative strength index (RSI)
+ 6. Bollinger bands (BB) -- Status: Done
+ 7. Relative strength index (RSI) -- Status: Under Development
  8. Fibonacci retracement
  9. Ichimoku cloud
 10. Standard deviation
@@ -30,3 +30,4 @@ As the development progresses some usage examples are added to the repository:
 - [Utils package usage examples](https://github.com/vsaveris/trading-technical-indicators/tree/master/examples/utils)
 - [Moving Averages Indicators usage examples](https://github.com/vsaveris/trading-technical-indicators/tree/master/examples/indicators/moving_averages)
 - [Stochastic Oscillators Indicators usage examples](https://github.com/vsaveris/trading-technical-indicators/tree/master/examples/indicators/stochastic_oscillators)
+- [Volatility Indicators usage examples](https://github.com/vsaveris/trading-technical-indicators/tree/master/examples/indicators/volatility)
