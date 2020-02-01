@@ -25,7 +25,7 @@ import tradingti as tti
 df = pd.read_csv('../data/sample_data.csv', parse_dates = True, index_col = 0)
 
 # Calculate the EMA indicator for span period = 200
-ema = EMA(df[['Adj Close']], span_periods = [200])
+ema = EMA(df['Adj Close'].to_frame(), span_periods = [200])
 
 # Save the plot of the calculated Technical Indicator
 ema.getTiPlot().savefig('../figures/indicators_ema_200_example.png')

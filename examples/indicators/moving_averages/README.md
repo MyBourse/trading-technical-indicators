@@ -2,8 +2,10 @@
 ## Description
 The `tradingti.indicators` package contains the implemented Trading Technical Indicators. The input data used for the below examples can be found under the `data` directory.
 
-### _trend module examples
-The `_trend` module defined under the `tradingti.indicators` package implements Technical Indicators of Trend type. Below are examples of using the implemented indicators.
+### Moving Averages Technical Indicators examples
+The Moving Averages Technical Indicators implemented are:
+- Simple Moving Average (SMA)
+- Exponential Moving Average (EMA)
 
 #### SMA Technical Indicator example
 ```
@@ -46,7 +48,7 @@ The script generates the below plots:
 
 ### EMA Technical Indicator example
 ```
-$python python indicators_ema.py
+$python indicators_ema.py
 
 - Graph ../figures/indicators_ema_200_example.png saved.
 - Graph ../figures/indicators_ema_50_200_example.png saved.
@@ -86,7 +88,7 @@ The script generates the below plots:
 
 ## Prerequisites
 1. python: `version 3.6` or later
-2. tradingti library: `commit c6cf9a2010ea01ecaf1056f8596d0093e965d639` or later
+2. tradingti library: `latest commit in master branch`
 3. matplotlib: `version 3.1.2` or later
 4. pandas: `version 0.25.3` or later
 

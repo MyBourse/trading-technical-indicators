@@ -28,5 +28,5 @@ In release 0.1 the below technical indicators will be included:
 As the development progresses some usage examples are added to the repository:
 
 - [Utils package usage examples](https://github.com/vsaveris/trading-technical-indicators/tree/master/examples/utils)
-- [Moving Average Indicators package usage examples](https://github.com/vsaveris/trading-technical-indicators/tree/master/examples/indicators/moving_average)
-- [Oscillators Indicators package usage examples](https://github.com/vsaveris/trading-technical-indicators/tree/master/examples/indicators/oscillators)
+- [Moving Averages Indicators usage examples](https://github.com/vsaveris/trading-technical-indicators/tree/master/examples/indicators/moving_averages)
+- [Stochastic Oscillators Indicators usage examples](https://github.com/vsaveris/trading-technical-indicators/tree/master/examples/indicators/stochastic_oscillators)

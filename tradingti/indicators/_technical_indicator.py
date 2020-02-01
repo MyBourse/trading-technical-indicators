@@ -7,14 +7,14 @@ enail: vsaveris@gmail.com
 
 License: MIT
 
-Date last modified: 22.01.2020
+Date last modified: 01.02.2020
 
 Python Version: 3.6
 '''
 
 from abc import ABC, abstractmethod
 import pandas as pd
-from ..utils import lineGraph, verticalLineSubplots
+from ..utils import linesGraph
 
 
 class TI(ABC):
@@ -59,7 +59,7 @@ class TI(ABC):
         getTiPlot(): Generates a plot including the input data and the technical 
             indicator calculated values.
             
-        getTiData(): Returns the Technical Indicator values for the whole period.
+        getTiData(): Returns the Technical Indicator values for the whole period
   
         getSignal(): Abstract method for Technical Indicator signal calculation.
 
@@ -91,12 +91,20 @@ class TI(ABC):
             matplotlib object: The generated plot.
         '''
         
+        # If data are Series, then convert them to DataFrame
+        if isinstance(self._input_data, pd.core.series.Series):
+            self._input_data = self._input_data.to_frame()
+            
+        if isinstance(self._ti_data, pd.core.series.Series):
+            self._ti_data = self._ti_data.to_frame()
+            
         if self._subplots:
-            return verticalLineSubplots(data_list = [self._input_data.to_frame(), self._ti_data], 
-                title = self._indicator_name, lines_color = self._lines_color)
+            data = [self._input_data, self._ti_data]
         else:
-            return lineGraph(data = pd.concat([self._input_data, self._ti_data, ], axis = 1), 
-                title = self._indicator_name, lines_color = self._lines_color)
+            data = pd.concat([self._input_data, self._ti_data], axis = 1)
+        
+        return linesGraph(data = data, title = self._indicator_name, 
+            lines_color = self._lines_color)
 
 
     def getTiData(self):

@@ -25,7 +25,7 @@ import tradingti as tti
 df = pd.read_csv('../data/sample_data.csv', parse_dates = True, index_col = 0)
 
 # Calculate the SMA indicator for sma period = 200
-sma = SMA(df[['Adj Close']], sma_periods = [200])
+sma = SMA(df['Adj Close'].to_frame(), sma_periods = [200])
 
 # Save the plot of the calculated Technical Indicator
 sma.getTiPlot().savefig('../figures/indicators_sma_200_example.png')

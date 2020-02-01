@@ -2,8 +2,10 @@
 ## Description
 The `tradingti.indicators` package contains the implemented Trading Technical Indicators. The input data used for the below examples can be found under the `data` directory.
 
-### _trend module examples
-The `_momentum` module defined under the `tradingti.indicators` package implements Technical Indicators of Momentum type. Below are examples of using the implemented indicators.
+### Stochastic Oscillators Technical Indicators examples
+The Stochastic Oscillators Technical Indicators implemented are:
+- Fast Stochastic Oscillator (FSO)
+- Slow Stochastic Oscillator (SSO)
 
 #### FSO Technical Indicator example
 ```
@@ -44,6 +46,7 @@ The script generates the below plots:
 ### SSO Technical Indicator example
 ```
 $python indicators_sso.py
+
 - Graph ../figures/indicators_sso_example.png saved.
 
 SSO data:
@@ -77,7 +80,7 @@ The script generates the below plots:
 
 ## Prerequisites
 1. python: `version 3.6` or later
-2. tradingti library: `commit 11ef8f420d5f29f813b1e5d1234e48fc3fee7248` or later
+2. tradingti library: `latest commit in master branch`
 3. matplotlib: `version 3.1.2` or later
 4. pandas: `version 0.25.3` or later
 
