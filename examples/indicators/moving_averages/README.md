@@ -6,6 +6,7 @@ The `tradingti.indicators` package contains the implemented Trading Technical In
 The Moving Averages Technical Indicators implemented are:
 - Simple Moving Average (SMA)
 - Exponential Moving Average (EMA)
+- Moving Average Convergence Divergence (MACD)
 
 #### SMA Technical Indicator example
 ```
@@ -85,6 +86,40 @@ The script generates the below plots:
 ##### EMA-200 and EMA-50
 ![](../figures/indicators_ema_50_200_example.png?raw=true)
 
+### MACD Technical Indicator example
+```
+$python indicators_macd.py
+
+- Graph ../figures/indicators_macd_example.png saved.
+
+MACD data:
+                 MACD  Signal Line
+Date
+2012-01-03  0.000000     0.000000
+2012-01-04 -0.056538    -0.031410
+2012-01-05 -0.000098    -0.018577
+2012-01-06 -0.032554    -0.023312
+2012-01-09 -0.098449    -0.045664
+...              ...          ...
+2012-09-06 -0.063506    -0.214686
+2012-09-07  0.079327    -0.155884
+2012-09-10 -0.057761    -0.136259
+2012-09-11 -0.188440    -0.146695
+2012-09-12 -0.331753    -0.183707
+
+[176 rows x 2 columns]
+
+MACD value at 2012-09-06: [-0.06350599349639197, -0.21468627319003128]
+
+MACD value at 2012-09-12 00:00:00 : [-0.33175294306838055, -0.1837067687406364]
+
+Signal: Hold [ 0 ]
+```
+
+The script generates the below plots:
+
+##### MACD
+![](../figures/indicators_macd_example.png?raw=true)
 
 ## Prerequisites
 1. python: `version 3.6` or later

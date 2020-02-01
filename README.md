@@ -13,8 +13,8 @@ In release 0.1 the below technical indicators will be included:
  2. Exponential moving average (EMA) -- Status: Done
  3. Fast Stochastic oscillator (FSO) -- Status: Done
  4. Slow Stochastic oscillator (SSO) -- Status: Done
- 5. Moving average convergence divergence (MACD) -- Status: Under Development
- 6. Bollinger bands
+ 5. Moving average convergence divergence (MACD) -- Status: Done
+ 6. Bollinger bands  -- Status: Under Development
  7. Relative strength index (RSI)
  8. Fibonacci retracement
  9. Ichimoku cloud

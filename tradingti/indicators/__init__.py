@@ -13,7 +13,7 @@ Date last modified: 26.01.2020
 Python Version: 3.6
 '''
 
-from ._trend import SMA, EMA
+from ._trend import SMA, EMA, MACD
 from ._momentum import FSO, SSO
 
-__all__ = ['SMA', 'EMA', 'FSO', 'SSO']
+__all__ = ['SMA', 'EMA', 'MACD', 'FSO', 'SSO']
