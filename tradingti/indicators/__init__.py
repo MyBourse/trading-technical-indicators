@@ -14,7 +14,7 @@ Python Version: 3.6
 '''
 
 from ._trend import SMA, EMA, MACD
-from ._momentum import FSO, SSO
+from ._momentum import FSO, SSO, RSI
 from ._volatility import BB
 
-__all__ = ['SMA', 'EMA', 'MACD', 'FSO', 'SSO', 'BB']
+__all__ = ['SMA', 'EMA', 'MACD', 'FSO', 'SSO', 'RSI', 'BB']
