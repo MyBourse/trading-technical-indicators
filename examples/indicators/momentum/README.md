@@ -5,6 +5,7 @@ The `tradingti.indicators` package contains the implemented Trading Technical In
 ### Momentum Technical Indicators examples
 The Momentum Technical Indicators implemented are:
 - Relative Strength Index (RSI)
+- Ichimoku Cloud (IC)
 
 #### RSI Technical Indicator example
 ```
@@ -40,6 +41,16 @@ The script generates the below plots:
 
 ##### RSI
 ![](../figures/indicators_rsi_example.png?raw=true)
+
+#### IC Technical Indicator example
+```
+$
+```
+
+The script generates the below plots:
+
+##### IC
+![](../figures/indicators_ic_example.png?raw=true)
 
 ## Prerequisites
 1. python: `version 3.6` or later

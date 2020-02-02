@@ -5,6 +5,7 @@ File name: _technical_indicator.py
     - Fast Stochastic Oscillator (FSO class)
     - Slow Stochastic Oscillator (SSO class)
     - Relative Strength Index (RSI class)
+    - Ichimoku Cloud (IC class)
            
 Author: Vasileios Saveris
 enail: vsaveris@gmail.com
@@ -434,3 +435,148 @@ class RSI(TI):
             return TRADE_SIGNALS['Buy']
         
         return TRADE_SIGNALS['Hold']
+        
+        
+class IC(TI):
+    '''
+    Ichimoku Cloud (IC) Technical Indicator class implementation.
+
+    Args:
+        df_data (pandas dataframe): The input data to the Technical Indicator.
+            Index is of type date. It contains the below columns:
+            'High', 'Low', 'Close', 'Adj Close'
+
+    Attributes:
+        -
+                                
+    Methods:
+        -
+        
+    Raises:
+        - TypeError
+        - ValueError
+        
+    '''
+    def __init__(self, df_data):
+        
+        # Validate the input data, check tradingti.utils._data_validation module
+        # for details
+        data_validation = validateStockData(df_data)
+        if data_validation is not None:
+            raise(TypeError(data_validation))
+            
+        # Validate that all required input data are available
+        for c in ['High', 'Low', 'Close', 'Adj Close']:
+            if c not in df_data.columns:
+                raise(ValueError('Input \'' + c + '\' data are missing for FSO indicator use. '+\
+                'Mandatory input data are: \'High\', \'Low\', \'Close\', \'Adj Close\'.'))
+            
+        # Sort the input data and fill the missing values if any
+        df_data = fillMissingValues(df_data)
+
+        # Parent class constructor (all job is done here, parent class provides the public
+        # interface for accessing the data of the indicator)
+        super().__init__(input_data = df_data['Adj Close'], ti_data = self._calculateIndicator(df_data),
+            indicator_name = 'IC', lines_color = ['black', 'cornflowerblue', 
+            'tomato', 'limegreen', 'orange', 'purple'], subplots = False)
+            
+    
+    def _calculateIndicator(self, input_data):
+        '''
+        Calculates the IC for the given input data.
+        
+        - TenkanSen (Conversion Line): (High + Low) / 2 default period = 9
+        - KijunSen (Base Line): (High + Low) / 2 default period = 26 
+        - Chiku Span (Lagging Span): Price Close shifted back 26 bars 
+        - Senkou A (Leading Span A): (TenkanSen + KijunSen) / 2 (Senkou A is 
+            shifted forward 26 bars) 
+        - Senkou B (Leading Span B): (High + Low) / 2 using period = 52 (Senkou 
+            B is shifted forward 26 bars)
+    
+        Args:
+            input_data (pandas dataframe): The input data to the Technical 
+                Indicator.
+
+        Raises:
+            -
+
+        Returns:
+            pandas dataframe: The calculated values of the Technical
+                indicator. Index is of type date. It contains one or two
+                columns depending the requested sma periods.
+        '''
+        
+        # Calculate Tenkan Sen
+        tenkan_sen = [None]*8
+        
+        for i in range(8, len(input_data.index)):
+            # Highest high for the last 9 periods
+            H9 = max(input_data.iloc[i-8:i+1, input_data.columns.get_loc('High')].values)
+        
+            # Lowest low for the last 9 periods
+            L9 = min(input_data.iloc[i-8:i+1, input_data.columns.get_loc('Low')].values)
+        
+            tenkan_sen.append((H9+L9)/2.) 
+
+        # Calculate Kijun Sen
+        kijun_sen = [None]*25
+        
+        for i in range(25, len(input_data.index)):
+            # Highest high for the last 26 periods
+            H26 = max(input_data.iloc[i-25:i+1, input_data.columns.get_loc('High')].values)
+        
+            # Lowest low for the last 26 periods
+            L26 = min(input_data.iloc[i-25:i+1, input_data.columns.get_loc('Low')].values)
+        
+            kijun_sen.append((H26+L26)/2.) 
+
+        # Calculate Chiku Span
+        chiku_span = list(input_data.shift(periods = -26)['Close'].values)
+        
+        # Calculate Senkou A
+        senkou_a = [None]*len(input_data.index)
+        senkou_a[26:] = [(ts + ks)/2. for ts, ks in zip(tenkan_sen[26:], kijun_sen[26:])]
+
+        # Calculate Senkou B
+        senkou_b = [None]*51
+        
+        for i in range(51, len(input_data.index)):
+            # Highest high for the last 52 periods
+            H52 = max(input_data.iloc[i-51:i+1, input_data.columns.get_loc('High')].values)
+        
+            # Lowest low for the last 52 periods
+            L52 = min(input_data.iloc[i-51:i+1, input_data.columns.get_loc('Low')].values)
+        
+            senkou_b.append((H52+L52)/2.) 
+        
+        senkou_b_shifted = [None]*len(input_data.index) 
+        senkou_b_shifted[26:] = senkou_b[:-26]
+        
+        # Build the indicator's dataframe
+        ic = pd.DataFrame(index = input_data.index, columns = ['Tenkan Sen', 
+            'Kijun Sen', 'Chiku Span', 'Senkou A', 'Senkou B'])
+        ic['Tenkan Sen'] = tenkan_sen
+        ic['Kijun Sen'] = kijun_sen
+        ic['Chiku Span'] = chiku_span
+        ic['Senkou A'] = senkou_a
+        ic['Senkou B'] = senkou_b_shifted
+        
+        return ic
+    
+    
+    def getSignal(self):
+        '''
+        Calculates and returns the signal of the technical indicator.
+    
+        Args:
+            -
+
+        Raises:
+            -
+
+        Returns:
+            integer: The Trading signal. Possible values are {'Hold': 0, 
+                'Buy': -1, 'Sell': 1}. See TRADE_SIGNALS package constant.
+        '''
+        
+        pass
