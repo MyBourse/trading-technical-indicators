@@ -32,3 +32,4 @@ As the development progresses some usage examples are added to the repository:
 - [Stochastic Oscillators Indicators usage examples](https://github.com/vsaveris/trading-technical-indicators/tree/master/examples/indicators/stochastic_oscillators)
 - [Volatility Indicators usage examples](https://github.com/vsaveris/trading-technical-indicators/tree/master/examples/indicators/volatility)
 - [Momentum Indicators usage examples](https://github.com/vsaveris/trading-technical-indicators/tree/master/examples/indicators/momentum)
+- [Support and Resistance Indicators usage examples](https://github.com/vsaveris/trading-technical-indicators/tree/master/examples/indicators/support_resistance)
