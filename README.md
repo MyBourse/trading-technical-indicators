@@ -9,19 +9,19 @@ The library is under development of the first release. The README file will be u
 ### Release Notes (v 0.1)
 ```
 In release 0.1 the below technical indicators will be included:
- 1. Simple Moving average (SMA) -- Status: Done
- 2. Exponential moving average (EMA) -- Status: Done
- 3. Fast Stochastic oscillator (FSO) -- Status: Done
- 4. Slow Stochastic oscillator (SSO) -- Status: Done
- 5. Moving average convergence divergence (MACD) -- Status: Done
- 6. Bollinger bands (BB) -- Status: Done
- 7. Relative strength index (RSI) -- Status: Done
- 8. Fibonacci retracement -- Status: Under Development
- 9. Ichimoku cloud
-10. Standard deviation
-11. Average directional index
-12. On-Balance-Volume (OBV)
-13. Parabolic Stop and Reverse (SAR)
+ 1. Simple Moving Average (SMA)                  -- Status: Done
+ 2. Exponential Moving Average (EMA)             -- Status: Done
+ 3. Fast Stochastic Oscillator (FSO)             -- Status: Done
+ 4. Slow Stochastic Oscillator (SSO)             -- Status: Done
+ 5. Moving Average Convergence Divergence (MACD) -- Status: Done
+ 6. Bollinger Bands (BB)                         -- Status: Done
+ 7. Relative Strength Index (RSI)                -- Status: Done
+ 8. Fibonacci Retracement (FR)                   -- Status: Under Development
+ 9. Ichimoku Cloud (IC)                          -- Status: Under Development
+10. Standard Deviation (SD)                      -- Status: Under Development
+11. Average Directional Movement Index (ADX)     -- Status: Under Development
+12. On Balance Volume (OBV)                      -- Status: Under Development
+13. Parabolic Stop and Reverse (SAR)             -- Status: Under Development
 ```
 
 ## Usage Examples
