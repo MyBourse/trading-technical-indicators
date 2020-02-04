@@ -5,6 +5,7 @@ The `tradingti.indicators` package contains the implemented Trading Technical In
 ### Volatility Technical Indicators examples
 The Volatility Technical Indicators implemented are:
 - Bollinger Bands (BB)
+- Standard Deviation (SD)
 
 #### BB Technical Indicator example
 ```
@@ -49,6 +50,39 @@ The script generates the below plots:
 ##### BB Medium Term
 ![](../figures/indicators_bb_medium_example.png?raw=true)
 
+#### SD Technical Indicator example
+```
+$python indicators_sd.py
+- Graph ../figures/indicators_sd_20_example.png saved.
+
+SD data:
+                  SD
+Date
+2012-01-03      NaN
+2012-01-04      NaN
+2012-01-05      NaN
+2012-01-06      NaN
+2012-01-09      NaN
+...             ...
+2012-09-06  1.69038
+2012-09-07  1.68048
+2012-09-10  1.64328
+2012-09-11  1.52033
+2012-09-12  1.33202
+
+[176 rows x 1 columns]
+
+SD value at 2012-09-06: [1.6903767098054314]
+
+SD value at 2012-09-12 00:00:00 : [1.3320165756831792]
+
+Signal: Hold [ 0 ]
+```
+
+The script generates the below plot:
+
+##### SD
+![](../figures/indicators_sd_20_example.png?raw=true)
 
 ## Prerequisites
 1. python: `version 3.6` or later
