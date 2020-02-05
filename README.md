@@ -17,7 +17,7 @@ In release 0.1 the below technical indicators will be included:
  6. Bollinger Bands (BB)                         -- Status: Done
  7. Relative Strength Index (RSI)                -- Status: Done
  8. Fibonacci Retracement (FR)                   -- Status: Done
- 9. Ichimoku Cloud (IC)                          -- Status: Under Development
+ 9. Ichimoku Cloud (IC)                          -- Status: Done
 10. Standard Deviation (SD)                      -- Status: Done
 11. Average Directional Movement Index (ADX)     -- Status: Under Development
 12. On Balance Volume (OBV)                      -- Status: Under Development

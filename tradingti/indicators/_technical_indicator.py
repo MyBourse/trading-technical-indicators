@@ -40,6 +40,12 @@ class TI(ABC):
             
         subplots (boolean): Indicates if the technical indicator graph should
             contain subplots.
+            
+        areas (list of dictionaries): Includes the areas to be plotted by using
+            the fill_between matplotlib method. Each member of the list should
+            be a dictionary with the below keys:
+            {'x':, 'y1':, 'y2':, 'color':}, see fill_between matplotlib method
+            for more details.
 
     Attributes:
         _input_data (pandas dataframe): The input to the Technical Indicator.
@@ -54,6 +60,12 @@ class TI(ABC):
             
         _subplots (boolean): Indicates if the technical indicator graph should
             contain subplots.
+            
+        _areas (list of dictionaries): Includes the areas to be plotted by using
+            the fill_between matplotlib method. Each member of the list should
+            be a dictionary with the below keys:
+            {'x':, 'y1':, 'y2':, 'color':}, see fill_between matplotlib method
+            for more details.
                                 
     Methods:
         getTiPlot(): Generates a plot including the input data and the technical 
@@ -67,13 +79,14 @@ class TI(ABC):
     
     '''
     def __init__(self, input_data, ti_data, indicator_name,
-        lines_color = None, subplots = False):
+        lines_color = None, subplots = False, areas = None):
 
         self._input_data = input_data
         self._ti_data = ti_data
         self._indicator_name = indicator_name
         self._lines_color = lines_color
         self._subplots = subplots
+        self._areas = areas
         
         
     def getTiPlot(self):
@@ -104,7 +117,7 @@ class TI(ABC):
             data = pd.concat([self._input_data, self._ti_data], axis = 1)
         
         return linesGraph(data = data, title = self._indicator_name, 
-            lines_color = self._lines_color)
+            lines_color = self._lines_color, areas = self._areas)
 
 
     def getTiData(self):

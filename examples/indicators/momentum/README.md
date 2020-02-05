@@ -44,7 +44,31 @@ The script generates the below plots:
 
 #### IC Technical Indicator example
 ```
-$
+$python indicators_ic.py
+- Graph ../figures/indicators_ic_example.png saved.
+
+IC data:
+             Tenkan Sen  Kijun Sen  Senkou A  Senkou B
+Date
+2012-01-03     131.465    131.465       NaN       NaN
+2012-01-04     130.600    130.600       NaN       NaN
+2012-01-05     130.350    130.350       NaN       NaN
+2012-01-06     130.350    130.350       NaN       NaN
+2012-01-09     130.330    130.330       NaN       NaN
+...                ...        ...       ...       ...
+2012-09-06     142.500    143.410  144.8525   142.865
+2012-09-07     142.620    142.140  144.5050   142.865
+2012-09-10     142.620    142.140  144.4175   142.865
+2012-09-11     142.620    141.540  144.4175   142.865
+2012-09-12     142.530    141.400  145.6525   142.865
+
+[176 rows x 4 columns]
+
+IC value at 2012-09-06: [142.5, 143.41, 144.85250000000002, 142.865]
+
+IC value at 2012-09-12 00:00:00 : [142.52999999999997, 141.39999999999998, 145.65249999999997, 142.865]
+
+Signal: Hold [ 0 ]
 ```
 
 The script generates the below plots:

@@ -473,12 +473,16 @@ class IC(TI):
             
         # Sort the input data and fill the missing values if any
         df_data = fillMissingValues(df_data)
-
+        ti_data = self._calculateIndicator(df_data)
+        self._input_data = df_data
+        
         # Parent class constructor (all job is done here, parent class provides the public
         # interface for accessing the data of the indicator)
-        super().__init__(input_data = df_data['Adj Close'], ti_data = self._calculateIndicator(df_data),
+        super().__init__(input_data = df_data['Adj Close'], ti_data = ti_data,
             indicator_name = 'IC', lines_color = ['black', 'cornflowerblue', 
-            'tomato', 'limegreen', 'orange', 'purple'], subplots = False)
+            'tomato', 'limegreen', 'orange', 'purple'], subplots = False,
+            areas = [{'x': ti_data.index, 'y1': ti_data['Senkou A'], 
+            'y2': ti_data['Senkou B'], 'color': 'lightblue'}])
             
     
     def _calculateIndicator(self, input_data):
@@ -506,67 +510,65 @@ class IC(TI):
                 columns depending the requested sma periods.
         '''
         
-        # Calculate Tenkan Sen
-        tenkan_sen = [None]*8
-        
-        for i in range(8, len(input_data.index)):
-            # Highest high for the last 9 periods
-            H9 = max(input_data.iloc[i-8:i+1, input_data.columns.get_loc('High')].values)
-        
-            # Lowest low for the last 9 periods
-            L9 = min(input_data.iloc[i-8:i+1, input_data.columns.get_loc('Low')].values)
-        
-            tenkan_sen.append((H9+L9)/2.) 
-
-        # Calculate Kijun Sen
-        kijun_sen = [None]*25
-        
-        for i in range(25, len(input_data.index)):
-            # Highest high for the last 26 periods
-            H26 = max(input_data.iloc[i-25:i+1, input_data.columns.get_loc('High')].values)
-        
-            # Lowest low for the last 26 periods
-            L26 = min(input_data.iloc[i-25:i+1, input_data.columns.get_loc('Low')].values)
-        
-            kijun_sen.append((H26+L26)/2.) 
-
-        # Calculate Chiku Span
-        chiku_span = list(input_data.shift(periods = -26)['Close'].values)
-        
-        # Calculate Senkou A
-        senkou_a = [None]*len(input_data.index)
-        senkou_a[26:] = [(ts + ks)/2. for ts, ks in zip(tenkan_sen[26:], kijun_sen[26:])]
-
-        # Calculate Senkou B
-        senkou_b = [None]*51
-        
-        for i in range(51, len(input_data.index)):
-            # Highest high for the last 52 periods
-            H52 = max(input_data.iloc[i-51:i+1, input_data.columns.get_loc('High')].values)
-        
-            # Lowest low for the last 52 periods
-            L52 = min(input_data.iloc[i-51:i+1, input_data.columns.get_loc('Low')].values)
-        
-            senkou_b.append((H52+L52)/2.) 
-        
-        senkou_b_shifted = [None]*len(input_data.index) 
-        senkou_b_shifted[26:] = senkou_b[:-26]
-        
-        # Build the indicator's dataframe
+        # Build the indicator's dataframe 
         ic = pd.DataFrame(index = input_data.index, columns = ['Tenkan Sen', 
-            'Kijun Sen', 'Chiku Span', 'Senkou A', 'Senkou B'])
-        ic['Tenkan Sen'] = tenkan_sen
-        ic['Kijun Sen'] = kijun_sen
-        ic['Chiku Span'] = chiku_span
-        ic['Senkou A'] = senkou_a
-        ic['Senkou B'] = senkou_b_shifted
+            'Kijun Sen', 'Senkou A', 'Senkou B'], data = None)
+        
+        ic['Tenkan Sen'] = (input_data['High'].rolling(window = 9, 
+            min_periods = 1).max() + input_data['Low'].rolling(window = 9,  
+            min_periods = 1).min())/2
+
+        ic['Kijun Sen'] = (input_data['High'].rolling(window = 26,
+            min_periods = 1).max() + input_data['Low'].rolling(window = 26,
+            min_periods = 1).min())/2
+
+        # Is optional, not needed in this version of the indicator. Column
+        # removed also from the ic dataframe definition.
+        #ic['Chiku Span'] = input_data['Adj Close'].shift(-26)
+
+        ic['Senkou A'] = ((ic['Tenkan Sen'] + ic['Kijun Sen'])/2).shift(26) 
+        
+        ic['Senkou B'] = ((input_data['High'].rolling(window = 52, 
+            min_periods = 1).max() + input_data['Low'].rolling(window = 52, 
+            min_periods = 1).min())/2).shift(26)
         
         return ic
+
     
+    def _whereInCloud(self, value, cloud):
+        '''
+        Checks the relative position of the value to the cloud.
+        
+        Args:
+            value (pfloat): The value for which the relative position to the
+                cloud should be calculated.
+                
+            cloud (list of two floats): Bounds of the cloud in not guaranteed 
+                order.
+
+        Raises:
+            -
+
+        Returns:
+            int: 0 means that value is within the cloud, 1 means that value
+                is above the cloud, -1 means that value is below the cloud.
+        '''
+        
+        ordered_values = cloud + [value]
+        ordered_values.sort()
+        
+        return ordered_values.index(value) - 1
+        
     
     def getSignal(self):
         '''
         Calculates and returns the signal of the technical indicator.
+        
+        - A buy signal is reinforced when the Tenkan Sen crosses above the Kijun 
+        Sen while the Tenkan Sen, Kijun Sen, and price are all above the cloud.
+        - A sell signal is reinforced when the TenKan Sen crosses below the 
+        Kijun Sen while the Tenkan Sen, Kijun Sen, and price are all below the 
+        cloud.
     
         Args:
             -
@@ -578,5 +580,25 @@ class IC(TI):
             integer: The Trading signal. Possible values are {'Hold': 0, 
                 'Buy': -1, 'Sell': 1}. See TRADE_SIGNALS package constant.
         '''
+
+        if self._ti_data.iat[-1,0] > self._ti_data.iat[-1,1] and \
+            self._whereInCloud(self._input_data['Adj Close'].to_frame().iat[-1,0], 
+            [self._ti_data.iat[-1,2], self._ti_data.iat[-1,3]]) == 1 and \
+            self._whereInCloud(self._ti_data.iat[-1,0], 
+            [self._ti_data.iat[-1,2], self._ti_data.iat[-1,3]]) == 1 and \
+            self._whereInCloud(self._ti_data.iat[-1,1], 
+            [self._ti_data.iat[-1,2], self._ti_data.iat[-1,3]]) == 1:
+            return TRADE_SIGNALS['Buy']
+            
+        if self._ti_data.iat[-1,0] < self._ti_data.iat[-1,1] and \
+            self._whereInCloud(self._input_data['Adj Close'].to_frame().iat[-1,0], 
+            [self._ti_data.iat[-1,2], self._ti_data.iat[-1,3]]) == -1 and \
+            self._whereInCloud(self._ti_data.iat[-1,0], 
+            [self._ti_data.iat[-1,2], self._ti_data.iat[-1,3]]) == -1 and \
+            self._whereInCloud(self._ti_data.iat[-1,1], 
+            [self._ti_data.iat[-1,2], self._ti_data.iat[-1,3]]) == -1:
+            return TRADE_SIGNALS['Buy']
+            
+        return TRADE_SIGNALS['Hold']
         
-        pass
+        

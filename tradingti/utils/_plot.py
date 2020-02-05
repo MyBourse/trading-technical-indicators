@@ -18,7 +18,7 @@ from ._data_validation import validateDataframe
 
 def linesGraph(data, title = 'Untitled Graph', x_label = 'Date', 
     y_label = 'Price', lines_color = [None], lines_width = [None], 
-    lines_style = [None], alpha_values = [None]): 
+    lines_style = [None], alpha_values = [None], areas = None): 
     '''
     Returns a lines graph of type matplotlib.pyplot. The graph can be either
     a figure with a single plot, or a figure containing two vertical subplots.
@@ -65,6 +65,12 @@ def linesGraph(data, title = 'Untitled Graph', x_label = 'Date',
             the call of the matplotlib.pyplot.plot method. In case where the 
             lines are more than the members of the list, then the list is 
             scanned again from the zero index.
+            
+        areas (list of dictionaries): Includes the areas to be plotted by using
+            the fill_between matplotlib method. Each member of the list should
+            be a dictionary with the below keys:
+            {'x':, 'y1':, 'y2':, 'color':}, see fill_between matplotlib method
+            for more details.
         
     Raises:
         TypeError()
@@ -127,4 +133,10 @@ def linesGraph(data, title = 'Untitled Graph', x_label = 'Date',
     plt.gcf().text(0.04, 0.5, y_label, fontsize = 11, fontweight = 'bold', 
         va = 'center', rotation = 'vertical')         
     
+    # Plot areas
+    if areas is not None:
+        for a in areas:
+            plt.gca().fill_between(x = a['x'], y1 = a['y1'], y2 = a['y2'], 
+                color = a['color'])
+
     return plt
