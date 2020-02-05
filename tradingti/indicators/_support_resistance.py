@@ -114,4 +114,30 @@ class FR(TI):
                 'Buy': -1, 'Sell': 1}. See TRADE_SIGNALS package constant.
         '''
         
-        pass
+        # Moves from in RL to another in downward direction
+        if self._input_data.iat[-2,0] > self._ti_data.iat[-2,3] and\
+            self._input_data.iat[-1,0] < self._ti_data.iat[-1,3]:
+            return TRADE_SIGNALS['Sell']
+            
+        if self._input_data.iat[-2,0] > self._ti_data.iat[-2,2] and\
+            self._input_data.iat[-1,0] < self._ti_data.iat[-1,2]:
+            return TRADE_SIGNALS['Sell']
+            
+        if self._input_data.iat[-2,0] > self._ti_data.iat[-2,1] and\
+            self._input_data.iat[-1,0] < self._ti_data.iat[-1,1]:
+            return TRADE_SIGNALS['Sell']
+            
+        # Moves from in RL to another in the upward direction
+        if self._input_data.iat[-2,0] < self._ti_data.iat[-2,3] and\
+            self._input_data.iat[-1,0] > self._ti_data.iat[-1,3]:
+            return TRADE_SIGNALS['Buy']
+            
+        if self._input_data.iat[-2,0] < self._ti_data.iat[-2,2] and\
+            self._input_data.iat[-1,0] > self._ti_data.iat[-1,2]:
+            return TRADE_SIGNALS['Buy']
+            
+        if self._input_data.iat[-2,0] < self._ti_data.iat[-2,1] and\
+            self._input_data.iat[-1,0] > self._ti_data.iat[-1,1]:
+            return TRADE_SIGNALS['Buy']
+            
+        return TRADE_SIGNALS['Hold']

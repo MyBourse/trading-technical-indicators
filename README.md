@@ -16,7 +16,7 @@ In release 0.1 the below technical indicators will be included:
  5. Moving Average Convergence Divergence (MACD) -- Status: Done
  6. Bollinger Bands (BB)                         -- Status: Done
  7. Relative Strength Index (RSI)                -- Status: Done
- 8. Fibonacci Retracement (FR)                   -- Status: Under Development
+ 8. Fibonacci Retracement (FR)                   -- Status: Done
  9. Ichimoku Cloud (IC)                          -- Status: Under Development
 10. Standard Deviation (SD)                      -- Status: Done
 11. Average Directional Movement Index (ADX)     -- Status: Under Development
