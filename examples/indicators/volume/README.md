@@ -37,7 +37,7 @@ Signal: Sell [ 1 ]
 
 The script generates the below plots:
 
-##### RSI
+##### OBV
 ![](../figures/indicators_obv_example.png?raw=true)
 
 ## Prerequisites
