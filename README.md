@@ -20,7 +20,7 @@ In release 0.1 the below technical indicators will be included:
  9. Ichimoku Cloud (IC)                          -- Status: Done
 10. Standard Deviation (SD)                      -- Status: Done
 11. Average Directional Movement Index (ADX)     -- Status: Under Development
-12. On Balance Volume (OBV)                      -- Status: Under Development
+12. On Balance Volume (OBV)                      -- Status: Done
 13. Parabolic Stop and Reverse (SAR)             -- Status: Under Development
 ```
 
@@ -33,3 +33,4 @@ As the development progresses some usage examples are added to the repository:
 - [Volatility Indicators usage examples](https://github.com/vsaveris/trading-technical-indicators/tree/master/examples/indicators/volatility)
 - [Momentum Indicators usage examples](https://github.com/vsaveris/trading-technical-indicators/tree/master/examples/indicators/momentum)
 - [Support and Resistance Indicators usage examples](https://github.com/vsaveris/trading-technical-indicators/tree/master/examples/indicators/support_resistance)
+- [Volume Indicators usage examples](https://github.com/vsaveris/trading-technical-indicators/tree/master/examples/indicators/volume)
