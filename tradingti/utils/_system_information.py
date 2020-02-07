@@ -8,7 +8,7 @@ enail: vsaveris@gmail.com
 
 License: MIT
 
-Date last modified: 22.01.2020
+Date last modified: 08.02.2020
 
 Python Version: 3.6
 '''
@@ -18,7 +18,7 @@ import sys
 import importlib
 
 
-def showVersions():
+def showSystemInfo():
     '''
     Prints system information.
     
@@ -34,9 +34,9 @@ def showVersions():
     
     # Print System Information
     print('\nSystem Information:')
-    print('-    python version:', sys.version),
+    print('- python version:', sys.version),
     print('- python executable:', sys.executable),
-    print('-          platform:', platform.platform())
+    print('- platform:', platform.platform())
     
     # Print Package Dependencies
     dependenciess = ['pandas', 'matplotlib']

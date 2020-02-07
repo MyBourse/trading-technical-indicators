@@ -8,13 +8,15 @@ enail: vsaveris@gmail.com
 
 License: MIT
 
-Date last modified: 22.01.2020
+Date last modified: 08.02.2020
 
 Python Version: 3.6
 '''
 
 from ._plot import linesGraph
 from ._data_preprocessing import fillMissingValues
-from ._system_information import showVersions
+from ._system_information import showSystemInfo
+from ._library_information import showLibraryInfo
 
-__all__ = ['linesGraph', 'fillMissingValues', 'showVersions']
+__all__ = ['linesGraph', 'fillMissingValues', 'showSystemInfo', 
+    'showLibraryInfo']
