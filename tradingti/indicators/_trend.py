@@ -5,18 +5,21 @@ File name: _technical_indicator.py
     - Simple Moving Average (SMA class)
     - Exponential Moving Average (EMA class)
     - Moving Average Convergence Divergence (MACD class)
+    - Average Directional Movement Index (ADX class)
+    - Directional Movement Index (DMI class)
            
 Author: Vasileios Saveris
 enail: vsaveris@gmail.com
 
 License: MIT
 
-Date last modified: 01.02.2020
+Date last modified: 06.02.2020
 
 Python Version: 3.6
 '''
 
 import pandas as pd
+from .._constants import *
 from ._average_technical_indicator import AverageTI
 from ._technical_indicator import TI
 from ..utils._data_validation import validateStockData
@@ -299,3 +302,258 @@ class MACD(TI):
             signal = TRADE_SIGNALS['SELL']
         
         return signal
+
+
+class DMI(TI):
+    '''
+    Directional Movement Index (DMI) Technical Indicator class 
+    implementation.
+
+    Args:
+        df_data (pandas dataframe): The input data to the Technical Indicator.
+            Index is of type date. It contains the below columns:
+            'High', 'Low', 'Close', 'Adj Close'
+
+    Attributes:
+        -
+                                
+    Methods:
+        -
+        
+    Raises:
+        - TypeError
+        - ValueError
+        
+    '''
+    def __init__(self, df_data):
+        
+        # Validate the input data, check tradingti.utils._data_validation module
+        # for details
+        data_validation = validateStockData(df_data)
+        if data_validation is not None:
+            raise(TypeError(data_validation))
+            
+        # Validate that all required input data are available
+        if 'High' not in df_data.columns:
+            raise(ValueError('Input \'High\' data are missing for DMI '    +\
+                'indicator use. Mandatory input data are: \'High\'.'))
+        elif 'Low' not in df_data.columns:
+            raise(ValueError('Input \'Low\' data are missing for DMI ' +\
+                'indicator use. Mandatory input data are: \'Low\'.'))
+        elif 'Close' not in df_data.columns:
+            raise(ValueError('Input \'Close\' data are missing for DMI ' +\
+                'indicator use. Mandatory input data are: \'Close\'.'))
+        elif 'Adj Close' not in df_data.columns:
+            raise(ValueError('Input \'Adj Close\' data are missing for DMI ' +\
+                'indicator use. Mandatory input data are: \'Adj Close\'.'))
+
+        # Sort the input data and fill the missing values if any
+        self._input_data = fillMissingValues(df_data)[['High', 'Low', 'Close', 
+            'Adj Close']]
+
+        # Parent class constructor (all job is done here, parent class provides 
+        # the public interface for accessing the data of the indicator)
+        super().__init__(input_data = df_data['Adj Close'].to_frame(), 
+            ti_data = self._calculateIndicator(self._input_data),
+            indicator_name = 'DMI', lines_color = ['black', 'limegreen', 'red',
+            'blue'], alpha_values = [1.0, 1.0, 1.0, 0.2], subplots = True)
+        
+        
+    def _calculateIndicator(self, input_data):
+        '''
+        Calculates the DMI for the given input data.
+    
+        Args:
+            input_data (pandas dataframe): The input data to the Technical 
+                Indicator.
+
+        Raises:
+            -
+
+        Returns:
+            pandas dataframe: The calculated values of the Technical
+                indicator. Index is of type date. It contains three columns, the
+                'DMI+', 'DMI-' and the 'DX'.
+        '''
+        
+        dmi = pd.DataFrame(index = input_data.index, columns = ['DI+', 'DI-', 
+            'DMI+', 'DMI-', 'True Range', 'Smoothed True Range', 'DX'], 
+            data = None)
+        
+        dmi.iloc[0,0:2] = 0.0
+        for i in range(1, len(input_data.index)):
+            
+            dmi.iat[i,4] =  max(input_data.iat[i,0] - input_data.iat[i,1],
+                abs(input_data.iat[i,0] - input_data.iat[i-1, 2]),
+                abs(input_data.iat[i,1] - input_data.iat[i-1, 2]))
+                
+            if input_data.iat[i,0] - input_data.iat[i-1,0] > \
+                input_data.iat[i-1,1] - input_data.iat[i,1]:
+                dmi.iat[i,0] = input_data.iat[i,0] - input_data.iat[i-1,0]
+            else:
+                dmi.iat[i,0] = 0.0
+            
+            if input_data.iat[i,0] - input_data.iat[i-1,0] < \
+                input_data.iat[i-1,1] - input_data.iat[i,1]:
+                dmi.iat[i,1] = input_data.iat[i-1,1] - input_data.iat[i,1]
+            else:
+                dmi.iat[i,1] = 0.0
+                
+            if i == 5:
+                dmi.iat[i,2] = dmi.iloc[i-5:i,0].sum()
+                dmi.iat[i,3] = dmi.iloc[i-5:i,1].sum()
+                dmi.iat[i,5] = dmi.iloc[i-5:i,4].sum()
+            elif i > 5:
+                dmi.iat[i,2] = dmi.iat[i-1,2] - dmi.iat[i-1,2]/5. + dmi.iat[i,0]
+                dmi.iat[i,3] = dmi.iat[i-1,3] - dmi.iat[i-1,3]/5. + dmi.iat[i,1]
+                dmi.iat[i,5] = dmi.iat[i-1,5] - dmi.iat[i-1,5]/5. + dmi.iat[i,4]
+                
+        for i in range(5, len(input_data.index)):
+            dmi.iat[i,2] = 100*dmi.iat[i,2]/dmi.iat[i,5]
+            dmi.iat[i,3] = 100*dmi.iat[i,3]/dmi.iat[i,5]
+            dmi.iat[i,6] = 100*(abs(dmi.iat[i,2] - dmi.iat[i,3]))/(dmi.iat[i,2] 
+                + dmi.iat[i,3])
+        
+        return dmi.drop(columns = ['DI+', 'DI-', 'True Range', 
+            'Smoothed True Range'])
+                  
+        
+    def getSignal(self):
+        '''
+        Calculates and returns the signal of the technical indicator.
+    
+        Args:
+            -
+
+        Raises:
+            -
+
+        Returns:
+            integer: The Trading signal. Possible values are {'Hold': 0, 
+                'Buy': -1, 'Sell': 1}. See TRADE_SIGNALS package constant.
+        '''
+        
+        # A buy signal is given when DMI+ crosses above DMI-
+        # A sell signal is given when DMI- crosses above DMI+
+        if self._ti_data.iat[-2,0] > self._ti_data.iat[-2,1] and \
+            self._ti_data.iat[-1,0] < self._ti_data.iat[-1,1]:
+            return TRADE_SIGNALS['Sell']
+            
+        elif self._ti_data.iat[-2,0] < self._ti_data.iat[-2,1] and \
+            self._ti_data.iat[-1,0] > self._ti_data.iat[-1,1]:
+            return TRADE_SIGNALS['Buy']
+            
+        else:
+            return TRADE_SIGNALS['Hold']
+
+
+class ADX(TI):
+    '''
+    Average Directional Movement Index (ADX) Technical Indicator class 
+    implementation.
+
+    Args:
+        df_data (pandas dataframe): The input data to the Technical Indicator.
+            Index is of type date. It contains the below columns:
+            'High', 'Low', 'Close', 'Adj Close'
+
+    Attributes:
+        -
+                                
+    Methods:
+        -
+        
+    Raises:
+        - TypeError
+        - ValueError
+        
+    '''
+    def __init__(self, df_data):
+        
+        # Validate the input data, check tradingti.utils._data_validation module
+        # for details
+        data_validation = validateStockData(df_data)
+        if data_validation is not None:
+            raise(TypeError(data_validation))
+            
+        # Validate that all required input data are available
+        if 'High' not in df_data.columns:
+            raise(ValueError('Input \'High\' data are missing for ADX '    +\
+                'indicator use. Mandatory input data are: \'High\'.'))
+        elif 'Low' not in df_data.columns:
+            raise(ValueError('Input \'Low\' data are missing for ADX ' +\
+                'indicator use. Mandatory input data are: \'Low\'.'))
+        elif 'Close' not in df_data.columns:
+            raise(ValueError('Input \'Close\' data are missing for ADX ' +\
+                'indicator use. Mandatory input data are: \'Close\'.'))
+        elif 'Adj Close' not in df_data.columns:
+            raise(ValueError('Input \'Adj Close\' data are missing for ADX ' +\
+                'indicator use. Mandatory input data are: \'Adj Close\'.'))
+
+        # Sort the input data and fill the missing values if any
+        input_data = fillMissingValues(df_data)[['High', 'Low', 'Close', 
+            'Adj Close']]
+
+        # Parent class constructor (all job is done here, parent class provides 
+        # the public interface for accessing the data of the indicator)
+        super().__init__(input_data = df_data['Adj Close'].to_frame(), 
+            ti_data = self._calculateIndicator(input_data),
+            indicator_name = 'ADX', lines_color = ['black', 'orange'], 
+            subplots = True)
+        
+        
+    def _calculateIndicator(self, input_data):
+        '''
+        Calculates the ADX for the given input data.
+    
+        Args:
+            input_data (pandas dataframe): The input data to the Technical 
+                Indicator.
+
+        Raises:
+            -
+
+        Returns:
+            pandas dataframe: The calculated values of the Technical
+                indicator. Index is of type date. It contains a column, the
+                'ADX'.
+        '''
+        
+        adx = DMI(input_data).getTiData()['DX'].to_frame().rolling(window = 5, 
+            min_periods = 1, center = False, win_type = None, on = None, 
+            axis = 0, closed = None).mean()
+        
+        adx.columns = ['ADX']
+        
+        return adx
+        
+        
+    def getSignal(self):
+        '''
+        Calculates and returns the signal of the technical indicator.
+    
+        Args:
+            -
+
+        Raises:
+            -
+
+        Returns:
+            integer: The Trading signal. Possible values are {'Hold': 0, 
+                'Buy': -1, 'Sell': 1}. See TRADE_SIGNALS package constant.
+        '''
+
+        # Price drops and strong trend
+        if self._input_data.iat[-3,0] > self._input_data.iat[-2,0] and \
+            self._input_data.iat[-2,0] > self._input_data.iat[-1,0] and\
+            self._ti_data.iat[-1,0] > 25:
+            return TRADE_SIGNALS['Sell']
+            
+        # Price raises and strong trend
+        elif self._input_data.iat[-3,0] < self._input_data.iat[-2,0] and\
+            self._input_data.iat[-2,0] < self._input_data.iat[-1,0] and\
+            self._ti_data.iat[-1,0] > 25:
+            return TRADE_SIGNALS['Buy']
+            
+        else:
+            return TRADE_SIGNALS['Hold']

@@ -19,9 +19,10 @@ In release 0.1 the below technical indicators will be included:
  8. Fibonacci Retracement (FR)                   -- Status: Done
  9. Ichimoku Cloud (IC)                          -- Status: Done
 10. Standard Deviation (SD)                      -- Status: Done
-11. Average Directional Movement Index (ADX)     -- Status: Under Development
+11. Average Directional Movement Index (ADX)     -- Status: Done
 12. On Balance Volume (OBV)                      -- Status: Done
 13. Parabolic Stop and Reverse (SAR)             -- Status: Under Development
+14. Directional Movement Index (DMI)             -- Status: Done
 ```
 
 ## Usage Examples
@@ -34,3 +35,4 @@ As the development progresses some usage examples are added to the repository:
 - [Momentum Indicators usage examples](https://github.com/vsaveris/trading-technical-indicators/tree/master/examples/indicators/momentum)
 - [Support and Resistance Indicators usage examples](https://github.com/vsaveris/trading-technical-indicators/tree/master/examples/indicators/support_resistance)
 - [Volume Indicators usage examples](https://github.com/vsaveris/trading-technical-indicators/tree/master/examples/indicators/volume)
+- [Trend Indicators usage examples](https://github.com/vsaveris/trading-technical-indicators/tree/master/examples/indicators/trend)

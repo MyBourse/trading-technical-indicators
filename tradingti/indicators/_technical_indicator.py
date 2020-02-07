@@ -41,6 +41,11 @@ class TI(ABC):
         subplots (boolean): Indicates if the technical indicator graph should
             contain subplots.
             
+        alpha_values (list of floats): Alpha value of each line, to be used in 
+            the call of the matplotlib.pyplot.plot method. In case where the 
+            lines are more than the members of the list, then the list is 
+            scanned again from the zero index.
+            
         areas (list of dictionaries): Includes the areas to be plotted by using
             the fill_between matplotlib method. Each member of the list should
             be a dictionary with the below keys:
@@ -61,6 +66,11 @@ class TI(ABC):
         _subplots (boolean): Indicates if the technical indicator graph should
             contain subplots.
             
+        _alpha_values (list of floats): Alpha value of each line, to be used in 
+            the call of the matplotlib.pyplot.plot method. In case where the 
+            lines are more than the members of the list, then the list is 
+            scanned again from the zero index.
+            
         _areas (list of dictionaries): Includes the areas to be plotted by using
             the fill_between matplotlib method. Each member of the list should
             be a dictionary with the below keys:
@@ -79,7 +89,8 @@ class TI(ABC):
     
     '''
     def __init__(self, input_data, ti_data, indicator_name,
-        lines_color = None, subplots = False, areas = None):
+        lines_color = None, subplots = False, alpha_values = [None], 
+        areas = None):
 
         self._input_data = input_data
         self._ti_data = ti_data
@@ -87,6 +98,7 @@ class TI(ABC):
         self._lines_color = lines_color
         self._subplots = subplots
         self._areas = areas
+        self._alpha_values = alpha_values
         
         
     def getTiPlot(self):
@@ -117,7 +129,8 @@ class TI(ABC):
             data = pd.concat([self._input_data, self._ti_data], axis = 1)
         
         return linesGraph(data = data, title = self._indicator_name, 
-            lines_color = self._lines_color, areas = self._areas)
+            lines_color = self._lines_color, alpha_values = self._alpha_values, 
+            areas = self._areas)
 
 
     def getTiData(self):

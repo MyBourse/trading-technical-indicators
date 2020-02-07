@@ -13,11 +13,11 @@ Date last modified: 06.02.2020
 Python Version: 3.6
 '''
 
-from ._trend import SMA, EMA, MACD
+from ._trend import SMA, EMA, MACD, ADX, DMI
 from ._momentum import FSO, SSO, RSI, IC
 from ._volatility import BB, SD
 from ._support_resistance import FR
 from ._volume import OBV
 
-__all__ = ['SMA', 'EMA', 'MACD', 'FSO', 'SSO', 'RSI', 'IC', 'BB', 'SD', 'FR', 
-    'OBV']
+__all__ = ['SMA', 'EMA', 'MACD', 'ADX', 'DMI', 'FSO', 'SSO', 'RSI', 'IC', 'BB',
+    'SD', 'FR', 'OBV']
