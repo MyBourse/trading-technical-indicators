@@ -21,8 +21,10 @@ In release 0.1 the below technical indicators will be included:
 10. Standard Deviation (SD)                      -- Status: Done
 11. Average Directional Movement Index (ADX)     -- Status: Done
 12. On Balance Volume (OBV)                      -- Status: Done
-13. Parabolic Stop and Reverse (SAR)             -- Status: Under Development
-14. Directional Movement Index (DMI)             -- Status: Done
+13. Directional Movement Index (DMI)             -- Status: Done
+```
+```
+Development of the first release (0.1) is completed. The code is currently uder review (issue #7). -- Status: Under Review
 ```
 
 ## Usage Examples
