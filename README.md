@@ -1,7 +1,7 @@
 # trading-technical-indicators
 Trading Technical Indicators, Open Source Library, in Python.
 
-The library is under development of the first release. The README file will be updated with the detailed information prior to the first release. Current version is `0.1.dev`.
+The library is under development of the first release. The README file will be updated with the detailed information prior to the first release.
 
 ## Planned Releases
 - version: `0.1`, planned release date: `2020-02-29`
