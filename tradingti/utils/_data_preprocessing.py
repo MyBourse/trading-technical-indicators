@@ -16,7 +16,8 @@ def fillMissingValues(df_data):
     '''
     Fills the missing values of a dataframe by executing first abs
     forward pass and then a backward pass. See details in:
-    https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.fillna.html
+    https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.
+    DataFrame.fillna.html
     
     Args:
         df_data (pandas.core.frame.DataFrame): The input data.

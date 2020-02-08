@@ -1,7 +1,6 @@
 '''
 File name: _system_information.py
-    Prints system information, defined under the 
-    tradingti.utils package.
+    Prints system information, defined under the tradingti.utils package.
            
 Author: Vasileios Saveris
 enail: vsaveris@gmail.com

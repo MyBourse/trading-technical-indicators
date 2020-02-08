@@ -1,6 +1,6 @@
 '''
 File name: _library_information.py
-    Prints library information about the implemented technical indicators , 
+    Prints library information about the implemented technical indicators, 
     their type and version. Inidcators version is the version of the library in
     which latest changes in their implementation applied.
        
@@ -54,7 +54,8 @@ def showLibraryInfo():
     Prints library information in the below format:
     <indicator type>
     - <indicator name>: <indicator version>
-    
+        ...
+        
     Args:
         -
 

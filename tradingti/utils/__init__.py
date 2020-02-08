@@ -1,7 +1,7 @@
 '''
 File name: __init__.py
     Trading Technical Indicators open source library, in python.
-    `utils` package.
+    `tradingti.utils` package.
            
 Author: Vasileios Saveris
 enail: vsaveris@gmail.com

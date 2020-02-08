@@ -13,8 +13,7 @@ Date last modified: 08.02.2020
 Python Version: 3.6
 '''
 
-# PEP0440: https://www.python.org/dev/peps/pep-0440/
-__version__ = '0.1.dev'
+__version__ = '0.0.2'
 
 from ._constants import *
 from .utils._system_information import showSystemInfo

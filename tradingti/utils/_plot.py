@@ -7,16 +7,16 @@ enail: vsaveris@gmail.com
 
 License: MIT
 
-Date last modified: 01.02.2020
+Date last modified: 08.02.2020
 
 Python Version: 3.6
 '''
 
 import matplotlib.pyplot as plt
-from ._data_validation import validateDataframe
+from _data_validation import validateDataframe
 
 
-def linesGraph(data, title = 'Untitled Graph', x_label = 'Date', 
+def linesGraph(data, title = 'Untitled Graph', x_label = 'Date',  
     y_label = 'Price', lines_color = [None], lines_width = [None], 
     lines_style = [None], alpha_values = [None], areas = None): 
     '''
@@ -73,13 +73,11 @@ def linesGraph(data, title = 'Untitled Graph', x_label = 'Date',
             for more details.
         
     Raises:
-        TypeError()
+        TypeError
 
     Returns:
         matplotlib.pyplot: The prepared graph object.
     '''
-
-    #plt.clf()
 
     # For handling a list input always
     if type(data) != list:
@@ -87,17 +85,14 @@ def linesGraph(data, title = 'Untitled Graph', x_label = 'Date',
     
     # Validate that the list contains at most two members
     if len(data) > 2:
-        raise(TypeError('Validation of the \'data\' argument of the '      +\
-            '\'linesGraph\' method failed. It should be a list of maximum '+\
+        raise(TypeError('Validation of the `data` argument of the '       +\
+            '`linesGraph` method failed. It should be a list of maximum ' +\
             'two members, but it contains ' + str(len(data)) + ' members.'))
     
     # Validate that each member of the `data` list is a dataframe and that its
     # index is of date type.
     for df in data:
-        validation_result = validateDataframe(df)
-        if validation_result is not None:
-            raise(TypeError('Validation of the \'data\' argument of the '+\
-                '\'linesGraph\' method failed. ' + validation_result))
+        validateDataframe(df)
 
     plt.figure(figsize = (7, 5))
     
