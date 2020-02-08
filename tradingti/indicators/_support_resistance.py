@@ -27,8 +27,8 @@ class FR(TI):
 
     Args:
         df_data (pandas dataframe): The input data to the Technical Indicator.
-            Index is of type date. It contains the below columns:
-            'Adj Close'
+            Index is of type date. The indicator requires the following stock
+            data: 'Adj Close'
             
     Attributes:
         -
@@ -37,37 +37,29 @@ class FR(TI):
         -
         
     Raises:
-        - TypeError
-        - ValueError
+        TypeError (Raised from validateStockData method)
+        ValueError (Raised from validateStockData method)
         
     '''
     def __init__(self, df_data):
-        
-        # Validate the input data, check tradingti.utils._data_validation module
-        # for details
-        data_validation = validateStockData(df_data)
-        if data_validation is not None:
-            raise(TypeError(data_validation))
-            
-        # Validate that all required input data are available
-        if 'Adj Close' not in df_data.columns:
-            raise(ValueError('Input \'Adj Close\' data are missing for FR ' +\
-                'indicator use. Mandatory input data are: \'Adj Close\'.'))
-            
-        # Sort the input data and fill the missing values if any
-        self._input_data = fillMissingValues(df_data)['Adj Close']
+       
+        # Validate and tranform the input data, check tradingti.utils.
+        # _data_validation module for more details
+        input_data = validateStockData(data = df_data, required_columns = 
+            ['Adj Close'], indicator_name = 'FR')
 
         # Parent class constructor (all job is done here, parent class provides 
-        # the public interface for accessing the data of the indicator)
-        super().__init__(input_data = self._input_data, 
-            ti_data = self._calculateIndicator(df_data['Adj Close']),
-            indicator_name = 'FR', lines_color = ['black', 'cornflowerblue', 
-            'limegreen', 'tomato', 'orange', 'purple'], subplots = False)
+        # the public interface for accessing the data of the indicator)    
+        super().__init__(input_data = input_data, 
+            ti_data = self._calculateIndicator(input_data),
+            indicator_name = 'FR', plotted_input_columns = ['Adj Close'], 
+            lines_color = ['black', 'limegreen', 'brown', 'peru', 
+            'orange', 'red'], subplots = False)
         
         
     def _calculateIndicator(self, input_data):
         '''
-        Calculates the FR for the given input data.
+        Calculates the FR technical indicator for the given input data.
 
         Args:
             input_data (pandas dataframe): The input data to the Technical 
@@ -81,22 +73,21 @@ class FR(TI):
                 indicator. Index is of type date. It contains five columns, the
                 resistance levels 'RL0', 'RL1', 'RL2', 'RL3' and 'RL4'.
         '''
-        
-        total_max = input_data.max()
-        total_min = input_data.min()
-        
+
+        total_max = input_data['Adj Close'].max()
+        total_min = input_data['Adj Close'].min()
+
         max_min_difference = total_max - total_min
         
         retracement_levels = [total_max - c*max_min_difference for c in 
             [0.0, 0.236, 0.382, 0.618, 1.0]]
-
+            
         fr = pd.DataFrame(index = input_data.index, 
             data = [[retracement_levels[i] for i in 
             range(len(retracement_levels))]]*len(input_data.index), 
             columns = ['RL' + str(i) for i in range(len(retracement_levels))])
         
         return fr
-        
         
         
     def getSignal(self):
@@ -110,34 +101,35 @@ class FR(TI):
             -
 
         Returns:
-            integer: The Trading signal. Possible values are {'Hold': 0, 
-                'Buy': -1, 'Sell': 1}. See TRADE_SIGNALS package constant.
+            tuple (string, integer): The Trading signal. Possible values are 
+            ('Hold', 0), ('Buy', -1), ('Sell', 1). See TRADE_SIGNALS package 
+            constant.
         '''
         
         # Moves from in RL to another in downward direction
         if self._input_data.iat[-2,0] > self._ti_data.iat[-2,3] and\
             self._input_data.iat[-1,0] < self._ti_data.iat[-1,3]:
-            return TRADE_SIGNALS['Sell']
+            return ('Sell', TRADE_SIGNALS['Sell'])
             
         if self._input_data.iat[-2,0] > self._ti_data.iat[-2,2] and\
             self._input_data.iat[-1,0] < self._ti_data.iat[-1,2]:
-            return TRADE_SIGNALS['Sell']
+            return ('Sell', TRADE_SIGNALS['Sell'])
             
         if self._input_data.iat[-2,0] > self._ti_data.iat[-2,1] and\
             self._input_data.iat[-1,0] < self._ti_data.iat[-1,1]:
-            return TRADE_SIGNALS['Sell']
+            return ('Sell', TRADE_SIGNALS['Sell'])
             
         # Moves from in RL to another in the upward direction
         if self._input_data.iat[-2,0] < self._ti_data.iat[-2,3] and\
             self._input_data.iat[-1,0] > self._ti_data.iat[-1,3]:
-            return TRADE_SIGNALS['Buy']
+            return ('Buy', TRADE_SIGNALS['Buy'])
             
         if self._input_data.iat[-2,0] < self._ti_data.iat[-2,2] and\
             self._input_data.iat[-1,0] > self._ti_data.iat[-1,2]:
-            return TRADE_SIGNALS['Buy']
+            return ('Buy', TRADE_SIGNALS['Buy'])
             
         if self._input_data.iat[-2,0] < self._ti_data.iat[-2,1] and\
             self._input_data.iat[-1,0] > self._ti_data.iat[-1,1]:
-            return TRADE_SIGNALS['Buy']
+            return ('Buy', TRADE_SIGNALS['Buy'])
             
-        return TRADE_SIGNALS['Hold']
+        return ('Hold', TRADE_SIGNALS['Hold'])

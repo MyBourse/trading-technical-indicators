@@ -32,7 +32,7 @@ FR value at 2012-09-06: [151.0, 144.27872, 140.12064, 133.39936, 122.52]
 
 FR value at 2012-09-12 00:00:00 : [151.0, 144.27872, 140.12064, 133.39936, 122.52]
 
-Signal: Hold [ 0 ]
+Signal: ('Hold', 0)
 ```
 
 The script generates the below plots:
@@ -42,7 +42,7 @@ The script generates the below plots:
 
 ## Prerequisites
 1. python: `version 3.6` or later
-2. tradingti library: `latest commit in master branch`
+2. tradingti library: `version 0.1` or later
 3. matplotlib: `version 3.1.2` or later
 4. pandas: `version 0.25.3` or later
 
