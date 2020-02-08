@@ -16,9 +16,9 @@ Python Version: 3.6
 
 import pandas as pd
 from ._technical_indicator import TI
+from .._constants import *
 from ..utils._data_validation import validateStockData
 from ..utils._data_preprocessing import fillMissingValues
-from .._constants import *
 
 
 class OBV(TI):
@@ -27,8 +27,8 @@ class OBV(TI):
 
     Args:
         df_data (pandas dataframe): The input data to the Technical Indicator.
-            Index is of type date. It contains the below columns:
-            'Volume', 'Adj Close'
+            Index is of type date. The indicator requires the following stock
+            data: 'Volume', 'Adj Close'
             
     Attributes:
         -
@@ -37,40 +37,29 @@ class OBV(TI):
         -
         
     Raises:
-        - TypeError
-        - ValueError
+        TypeError (Raised from validateStockData method)
+        ValueError (Raised from validateStockData method)
         
     '''
     def __init__(self, df_data):
         
-        # Validate the input data, check tradingti.utils._data_validation module
-        # for details
-        data_validation = validateStockData(df_data)
-        if data_validation is not None:
-            raise(TypeError(data_validation))
-            
-        # Validate that all required input data are available
-        if 'Volume' not in df_data.columns:
-            raise(ValueError('Input \'Volume\' data are missing for OBV '    +\
-                'indicator use. Mandatory input data are: \'Volume\'.'))
-        elif 'Adj Close' not in df_data.columns:
-            raise(ValueError('Input \'Adj Close\' data are missing for OBV ' +\
-                'indicator use. Mandatory input data are: \'Adj Close\'.'))
-
-        # Sort the input data and fill the missing values if any
-        self._input_data = fillMissingValues(df_data)[['Volume', 'Adj Close']]
+        # Validate and tranform the input data, check tradingti.utils.
+        # _data_validation module for more details
+        input_data = validateStockData(data = df_data, required_columns = 
+            ['Volume', 'Adj Close'], indicator_name = 'OBV')
 
         # Parent class constructor (all job is done here, parent class provides 
-        # the public interface for accessing the data of the indicator)
-        super().__init__(input_data = df_data['Adj Close'].to_frame(), 
-            ti_data = self._calculateIndicator(self._input_data),
-            indicator_name = 'OBV', lines_color = ['black', 'limegreen'], 
+        # the public interface for accessing the data of the indicator)    
+        super().__init__(input_data = input_data, 
+            ti_data = self._calculateIndicator(input_data),
+            indicator_name = 'OBV', plotted_input_columns = ['Adj Close'], 
+            y_label = 'Volume | Price', lines_color = ['black', 'limegreen'], 
             subplots = True)
         
         
     def _calculateIndicator(self, input_data):
         '''
-        Calculates the OBV for the given input data.
+        Calculates the OBV technical indicator for the given input data.
 
         Args:
             input_data (pandas dataframe): The input data to the Technical 
@@ -117,17 +106,18 @@ class OBV(TI):
             -
 
         Returns:
-            integer: The Trading signal. Possible values are {'Hold': 0, 
-                'Buy': -1, 'Sell': 1}. See TRADE_SIGNALS package constant.
+            tuple (string, integer): The Trading signal. Possible values are 
+            ('Hold', 0), ('Buy', -1), ('Sell', 1). See TRADE_SIGNALS package 
+            constant.
         '''
 
         if self._ti_data.iat[-3, 0] > self._ti_data.iat[-2, 0] and\
             self._ti_data.iat[-2, 0] > self._ti_data.iat[-1, 0]:
-            return TRADE_SIGNALS['Sell']
+            return ('Sell', TRADE_SIGNALS['Sell'])
             
         elif self._ti_data.iat[-3, 0] < self._ti_data.iat[-2, 0] and\
             self._ti_data.iat[-2, 0] < self._ti_data.iat[-1, 0]:
-            return TRADE_SIGNALS['Buy']
+            return ('Buy', TRADE_SIGNALS['Buy'])
             
         else:
-            return TRADE_SIGNALS['Hold']
+            return ('Hold', TRADE_SIGNALS['Hold'])

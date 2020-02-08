@@ -15,10 +15,10 @@ Python Version: 3.6
 
 import pandas.core as pc
 from pandas.api.types import is_numeric_dtype
-from _data_preprocessing import fillMissingValues
+from ._data_preprocessing import fillMissingValues
 
 
-def validateDataframe(data):
+def validateDataFrame(data):
     '''
     Validates that the data argument is a pandas data frame and that its index
     is of date type.
@@ -35,14 +35,14 @@ def validateDataframe(data):
 
     # Validate that the data argumnet is a pandas dataframe object
     if not isinstance(data, pc.frame.DataFrame):
-        raise TypeError('The argument should be of type pandas.core.frame.' +\
-            'DataFrame but it is of type ' + str(type(data)) + '.')
+        raise TypeError('The argument should be of type `pandas.core.frame`.' +\
+            'DataFrame but it is of type `' + str(type(data)) + '`.')
 
     # Validate that the index of the pandas dataframe is a date
     if not isinstance(data.index, pc.indexes.datetimes.DatetimeIndex):
-        raise TypeError('The index of the dataframe argument should be of ' +\
-            'type pandas.core.indexes.datetimes.DatetimeIndex but it is of '+\
-            'type ' + str(type(data.index)) + '.')
+        raise TypeError('The index of the dataframe argument should be of '   +\
+            'type `pandas.core.indexes.datetimes.DatetimeIndex` but it is of '+\
+            'type `' + str(type(data.index)) + '`.')
     
 
 def validateStockData(data, required_columns, indicator_name):
@@ -74,11 +74,11 @@ def validateStockData(data, required_columns, indicator_name):
     '''
     
     # Validate the type of the input arguments
-    validateDataframe(data)
+    validateDataFrame(data)
     
     if type(required_columns) != list:
-        raise TypeError('The argument required_columns should be a list ' +\
-            'but it is of type ' + str(type(required_columns)) + '.')
+        raise TypeError('The argument required_columns should be a `list` ' +\
+            'but it is of type `' + str(type(required_columns)) + '`.')
 
     # Validate that the data frame is not empty
     if data.empty:
@@ -90,19 +90,19 @@ def validateStockData(data, required_columns, indicator_name):
     for column in data.columns:
         if not is_numeric_dtype(data[column]):
             raise ValueError('The input data frame must hold columns of ' +\
-                'numeric type. column = ' + column + ', is_numeric = '    +\
+                'numeric type. column `' + column + '`, is_numeric = '    +\
                 str(is_numeric_dtype(data[column])) + '.')
                 
     for column in required_columns:
         # Check that required_columns are strings
         if type(column) != str:
             raise TypeError('Required columns list should contain strings ' +\
-                'but column = ' + str(column) + ' it is of type '           +\
-                str(type(column)) + '.')
+                'but column `' + str(column) + '` it is of type `'          +\
+                str(type(column)) + '`.')
             
         elif column not in data.columns:
-            raise ValueError('Required column ' + column + ' for the ' +\
-                'technical indicator ' + indicator_name + ' was not '  +\
+            raise ValueError('Required column `' + column + '` for the ' +\
+                'technical indicator `' + indicator_name + '` was not '  +\
                 'found in the data frame.')
     
     # Remove not required columns

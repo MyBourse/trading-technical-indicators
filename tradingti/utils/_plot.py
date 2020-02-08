@@ -13,7 +13,7 @@ Python Version: 3.6
 '''
 
 import matplotlib.pyplot as plt
-from _data_validation import validateDataframe
+from ._data_validation import validateDataFrame
 
 
 def linesGraph(data, title = 'Untitled Graph', x_label = 'Date',  
@@ -92,7 +92,7 @@ def linesGraph(data, title = 'Untitled Graph', x_label = 'Date',
     # Validate that each member of the `data` list is a dataframe and that its
     # index is of date type.
     for df in data:
-        validateDataframe(df)
+        validateDataFrame(df)
 
     plt.figure(figsize = (7, 5))
     
