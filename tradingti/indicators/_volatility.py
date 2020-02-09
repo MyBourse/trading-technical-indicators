@@ -172,7 +172,7 @@ class SD(TI):
         # Validate and tranform the input data, check tradingti.utils.
         # _data_validation module for more details
         input_data = validateStockData(data = df_data, required_columns = 
-            ['Volume', 'Adj Close'], indicator_name = 'SD')
+            ['Adj Close'], indicator_name = 'SD')
 
         # Validate that periods is positive integer less than the number of the
         # input periods found in the dataframe.
@@ -208,13 +208,9 @@ class SD(TI):
                 indicator. Index is of type date. It contains one column, the
                 'SD'.
         '''
-        
-        # Create empty dataframe for the indicator
-        sd = pd.DataFrame(index = input_data.index, columns = ['SD'], data = None)
-        
-        # For each date, calculate std for the last n-periods
-        for i in range(self._periods-1, len(input_data.index)):
-            sd.iloc[i] = input_data.iloc[i-self._periods+1:i+1].std()
+
+        sd = input_data.rolling(self._periods).std()
+        sd.columns = ['SD']
 
         return sd
         
