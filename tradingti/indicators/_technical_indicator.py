@@ -202,10 +202,13 @@ class TI(ABC):
             list of numbers: The value of the Technical Indicator for the given
                 date.
         '''
-
-        if date is None:
-            return list(self._ti_data.iloc[-1, :])
-        else:
-            return list(self._ti_data.loc[pd.to_datetime(date), :])
+        
+        try:
+            if date is None:
+                return list(self._ti_data.iloc[-1, :])
+            else:
+                return list(self._ti_data.loc[pd.to_datetime(date), :])
+        except:
+            return None
 
         
