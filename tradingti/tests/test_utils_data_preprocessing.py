@@ -1,5 +1,5 @@
 '''
-File name: test_utils_data_preprocessing
+File name: test_utils_data_preprocessing.oy
     Trading Technical Indicators open source library, unit testing.
     Test cases for the tradingti.utils._data_preprocessing module.
            
@@ -27,16 +27,15 @@ class TestFillMissingValues(unittest.TestCase):
 
     def test_input_argument_wrong_type(self):
         
-        with self.assertRaises(TypeError):
-            ut.fillMissingValues(1) 
+        self.assertEqual(ut.fillMissingValues(1), 1)
             
     
     def test_input_argument_empty_dataframe(self):
         
-        df = pd.DataFrame(index = range(10), columns = ['A'], data = None)
+        df = pd.DataFrame(index = range(10), columns = ['A'], data = None, 
+            dtype = float)
         
-        with self.assertRaises(ValueError):
-            ut.fillMissingValues(df) 
+        pd.testing.assert_frame_equal(ut.fillMissingValues(df) , df) 
             
             
     def test_result_input_sorted(self):

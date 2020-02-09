@@ -12,6 +12,8 @@ Date last modified: 22.01.2020
 Python Version: 3.6
 '''
 
+import pandas as pd
+
 def fillMissingValues(df_data):
     '''
     Fills the missing values of a dataframe by executing first abs
@@ -30,13 +32,15 @@ def fillMissingValues(df_data):
             values filled.
     '''
     
-    # Sort dataframe on index ascending
-    df_data = df_data.sort_index(ascending = True)
+    if isinstance(df_data, pd.DataFrame):
     
-    # Fill forward
-    df_data.fillna(method = 'ffill', inplace = True)
+        # Sort dataframe on index ascending
+        df_data = df_data.sort_index(ascending = True)
     
-    # Fill backward
-    df_data.fillna(method = 'bfill', inplace = True)
+        # Fill forward
+        df_data.fillna(method = 'ffill', inplace = True)
+    
+        # Fill backward
+        df_data.fillna(method = 'bfill', inplace = True)
     
     return df_data
