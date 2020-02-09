@@ -32,23 +32,25 @@ class SMA(AverageTI):
 
     Args:
         df_data (pandas dataframe): The input data to the Technical Indicator.
-            Index is of type date. It contains one column with the Adjusted
-            Closed price of a given stock.
+            Index is of type date. The indicator requires the following stock
+            data: 'Adj Close'
                 
         sma_periods (object): The sma periods for which the rolling mean of the
             input data should be calculated. Is a list of integers, with one 
             (representing the long term SMA) or two (representing the short term
             and the long term SMA) members at most. Default values are [50, 200]
             50 for the short term and 200 for the long term.
-
-    Attributes:            
-        _sma_periods (list of integers): The rolling mean windows.
+            
+    Attributes:
+        _sma_periods (object): The sma periods for which the rolling mean of the
+            input data should be calculated.
                                 
     Methods:
-        _calculateSMA(): Calculates the SMA for the given input data.
+        -
         
     Raises:
-        -
+        TypeError (Raised from validateStockData method)
+        ValueError (Raised from validateStockData method)
         
     '''
     def __init__(self, df_data, sma_periods = [50, 200]):
@@ -56,16 +58,16 @@ class SMA(AverageTI):
         self._sma_periods = sma_periods
         
         if len(sma_periods) == 1:
-            lines_color = ['rosybrown', 'g']
+            lines_color = ['black', 'cornflowerblue']
         else:
-            lines_color = ['rosybrown', 'g', 'royalblue']
+            lines_color = ['black', 'cornflowerblue', 'tomato']
         
-        super().__init__(df_data = df_data, calculate_MA = self._calculateSMA,
-            indicator_name = 'SMA-' + str(sma_periods), 
-            lines_color = lines_color, periods = sma_periods)
+        super().__init__(df_data = df_data, calculate_MA = 
+            self._calculateIndicator, indicator_name = 'SMA-' + \
+            str(sma_periods), lines_color = lines_color, periods = sma_periods)
         
     
-    def _calculateSMA(self, input_data):
+    def _calculateIndicator(self, input_data):
         '''
         Calculates the SMA for the given input data.
     
@@ -83,7 +85,7 @@ class SMA(AverageTI):
         '''
     
         sma = pd.DataFrame(index = input_data.index)
-        
+
         # Calculate SMA for each requested rolling window (concat results to a 
         # single dataframe)
         for sma_period in self._sma_periods:
@@ -102,8 +104,8 @@ class EMA(AverageTI):
 
     Args:
         df_data (pandas dataframe): The input data to the Technical Indicator.
-            Index is of type date. It contains one column with the Adjusted
-            Closed price of a given stock.
+            Index is of type date. The indicator requires the following stock
+            data: 'Adj Close'
                 
         span_periods (object): The span periods from which the decay is 
             calculated. Is a list of integers, with one (representing the long 
@@ -112,13 +114,15 @@ class EMA(AverageTI):
             and 200 for the long term.
 
     Attributes:
-        _span_periods (list of integers): The span periods.
+        _span_periods (object): The span periods from which the decay is 
+            calculated.
                                 
     Methods:
-        _calculateEMA(): Calculates the EMA for the given input data.
+        -
         
     Raises:
-        -
+        TypeError (Raised from validateStockData method)
+        ValueError (Raised from validateStockData method)
         
     '''
     def __init__(self, df_data, span_periods = [26, 200]):
@@ -126,16 +130,17 @@ class EMA(AverageTI):
         self._span_periods = span_periods
 
         if len(span_periods) == 1:
-            lines_color = ['rosybrown', 'g']
+            lines_color = ['black', 'cornflowerblue']
         else:
-            lines_color = ['rosybrown', 'g', 'royalblue']
+            lines_color = ['black', 'cornflowerblue', 'tomato']
         
-        super().__init__(df_data = df_data, calculate_MA = self._calculateEMA,
-            indicator_name = 'EMA-' + str(span_periods),
-            lines_color = lines_color, periods = span_periods)
+        super().__init__(df_data = df_data, calculate_MA = 
+            self._calculateIndicator, indicator_name = 'EMA-' + \
+            str(span_periods), lines_color = lines_color, periods = 
+            span_periods)
         
     
-    def _calculateEMA(self, input_data):
+    def _calculateIndicator(self, input_data):
         '''
         Calculates the EMA for the given input data.
     
@@ -172,8 +177,8 @@ class MACD(TI):
 
     Args:
         df_data (pandas dataframe): The input data to the Technical Indicator.
-            Index is of type date. It contains the below columns:
-            'Adj Close'
+            Index is of type date. The indicator requires the following stock
+            data: 'Adj Close'
 
     Attributes:
         -
@@ -182,40 +187,29 @@ class MACD(TI):
         -
         
     Raises:
-        - TypeError
-        - ValueError
+        TypeError (Raised from validateStockData method)
+        ValueError (Raised from validateStockData method)
         
     '''
     def __init__(self, df_data):
         
-        # Validate the input data, check tradingti.utils._data_validation module
-        # for details
-        data_validation = validateStockData(df_data)
-        if data_validation is not None:
-            raise(TypeError(data_validation))
-            
-        # Validate that all required input data are available
-        if 'Adj Close' not in df_data.columns:
-            raise(ValueError('Input \'Adj Close\' data are missing for MACD ' +\
-                'indicator use. Mandatory input data are: \'Adj Close\'.'))
-            
-        # Sort the input data and fill the missing values if any
-        df_data = fillMissingValues(df_data)
+        # Validate and tranform the input data, check tradingti.utils.
+        # _data_validation module for more details
+        input_data = validateStockData(data = df_data, required_columns = 
+            ['Adj Close'], indicator_name = 'MACD')
 
         # Parent class constructor (all job is done here, parent class provides 
-        # the public interface for accessing the data of the indicator)
-        super().__init__(input_data = df_data['Adj Close'], 
-            ti_data = self._calculateIndicator(df_data['Adj Close']),
-            indicator_name = 'MACD', lines_color = ['cornflowerblue', 'tomato', 
-            'limegreen'], subplots = True)
-        
+        # the public interface for accessing the data of the indicator)    
+        super().__init__(input_data = input_data, 
+            ti_data = self._calculateIndicator(input_data),
+            indicator_name = 'MACD', plotted_input_columns = ['Adj Close'], 
+            y_label = 'MACD | Price', lines_color = ['black', 'cornflowerblue', 
+            'tomato'], subplots = True)
+
         
     def _calculateIndicator(self, input_data):
         '''
-        Calculates the MACD for the given input data.
-        
-        MACD = EMA_26 - EMA_12
-        Signal Line = EMA_9
+        Calculates the MACD technical indicator for the given input data.
     
         Args:
             input_data (pandas dataframe): The input data to the Technical 
@@ -230,10 +224,10 @@ class MACD(TI):
                 'MACD' and the 'Signal Line'.
         '''
         
-        EMA_26 = EMA(input_data.to_frame(), span_periods = [26]).getTiData()
+        EMA_26 = EMA(input_data, span_periods = [26]).getTiData()
         EMA_26.columns = ['EMA']
         
-        EMA_12 = EMA(input_data.to_frame(), span_periods = [12]).getTiData()
+        EMA_12 = EMA(input_data, span_periods = [12]).getTiData()
         EMA_12.columns = ['EMA']
         
         macd = EMA_12.subtract(EMA_26)
@@ -259,8 +253,9 @@ class MACD(TI):
             -
 
         Returns:
-            integer: The Trading signal. Possible values are {'Hold': 0, 
-                'Buy': -1, 'Sell': 1}. See TRADE_SIGNALS package constant.
+            tuple (string, integer): The Trading signal. Possible values are 
+            ('Hold', 0), ('Buy', -1), ('Sell', 1). See TRADE_SIGNALS package 
+            constant.
         '''
         
         signal = 0
@@ -268,41 +263,42 @@ class MACD(TI):
         # MACD crossing above zero is considered bullish, while crossing below 
         # zero is bearish. 
         if self._ti_data.iat[-2, 0] < 0. and self._ti_data.iat[-1, 0] > 0.:
-            signal += TRADE_SIGNALS['BUY']
+            signal += TRADE_SIGNALS['Buy']
             
         if self._ti_data.iat[-2, 0] > 0. and self._ti_data.iat[-1, 0] < 0.:
-            signal += TRADE_SIGNALS['SELL']
+            signal += TRADE_SIGNALS['Sell']
 
         # MACD turns up from below zero it is considered bullish.
         # MACD turns down from above zero it is considered bearish.
         if  self._ti_data.iat[-2, 0] <  self._ti_data.iat[-1, 0] and\
             self._ti_data.iat[-1, 0] < 0.:
-            signal += TRADE_SIGNALS['BUY']
+            signal += TRADE_SIGNALS['Buy']
         
         if  self._ti_data.iat[-2, 0] >  self._ti_data.iat[-1, 0] and\
             self._ti_data.iat[-1, 0] > 0.:
-            signal += TRADE_SIGNALS['SELL']
+            signal += TRADE_SIGNALS['Sell']
            
         # When the MACD line crosses from below to above the signal line, the 
         # indicator is considered bullish.
         if self._ti_data.iat[-2, 0] < self._ti_data.iat[-2, 1] and\
            self._ti_data.iat[-1, 0] > self._ti_data.iat[-1, 1]:
-           signal += TRADE_SIGNALS['BUY']
+           signal += TRADE_SIGNALS['Buy']
 
         # When the MACD line crosses from above to below the signal line, the 
         # indicator is considered bearish.
         if self._ti_data.iat[-2, 0] > self._ti_data.iat[-2, 1] and\
            self._ti_data.iat[-1, 0] < self._ti_data.iat[-1, 1]:
-           signal += TRADE_SIGNALS['SELL']
+           signal += TRADE_SIGNALS['Sell']
 
         # Signal voting
         if signal <= -1:
-            signal = TRADE_SIGNALS['BUY']
+            signal = TRADE_SIGNALS['Buy']
         elif signal >= 1:
-            signal = TRADE_SIGNALS['SELL']
+            signal = TRADE_SIGNALS['Sell']
         
-        return signal
-
+        return (list(TRADE_SIGNALS.keys())[list(TRADE_SIGNALS.values()).
+            index(signal)], signal)
+  
 
 class DMI(TI):
     '''
@@ -311,9 +307,9 @@ class DMI(TI):
 
     Args:
         df_data (pandas dataframe): The input data to the Technical Indicator.
-            Index is of type date. It contains the below columns:
-            'High', 'Low', 'Close', 'Adj Close'
-
+            Index is of type date. The indicator requires the following stock
+            data: 'High', 'Low', 'Close', 'Adj Close'
+    
     Attributes:
         -
                                 
@@ -321,47 +317,30 @@ class DMI(TI):
         -
         
     Raises:
-        - TypeError
-        - ValueError
+        TypeError (Raised from validateStockData method)
+        ValueError (Raised from validateStockData method)
         
     '''
     def __init__(self, df_data):
         
-        # Validate the input data, check tradingti.utils._data_validation module
-        # for details
-        data_validation = validateStockData(df_data)
-        if data_validation is not None:
-            raise(TypeError(data_validation))
-            
-        # Validate that all required input data are available
-        if 'High' not in df_data.columns:
-            raise(ValueError('Input \'High\' data are missing for DMI '    +\
-                'indicator use. Mandatory input data are: \'High\'.'))
-        elif 'Low' not in df_data.columns:
-            raise(ValueError('Input \'Low\' data are missing for DMI ' +\
-                'indicator use. Mandatory input data are: \'Low\'.'))
-        elif 'Close' not in df_data.columns:
-            raise(ValueError('Input \'Close\' data are missing for DMI ' +\
-                'indicator use. Mandatory input data are: \'Close\'.'))
-        elif 'Adj Close' not in df_data.columns:
-            raise(ValueError('Input \'Adj Close\' data are missing for DMI ' +\
-                'indicator use. Mandatory input data are: \'Adj Close\'.'))
-
-        # Sort the input data and fill the missing values if any
-        self._input_data = fillMissingValues(df_data)[['High', 'Low', 'Close', 
-            'Adj Close']]
+        # Validate and tranform the input data, check tradingti.utils.
+        # _data_validation module for more details
+        input_data = validateStockData(data = df_data, required_columns = 
+            ['High', 'Low', 'Close', 'Adj Close'], indicator_name = 'DMI')
 
         # Parent class constructor (all job is done here, parent class provides 
-        # the public interface for accessing the data of the indicator)
-        super().__init__(input_data = df_data['Adj Close'].to_frame(), 
-            ti_data = self._calculateIndicator(self._input_data),
-            indicator_name = 'DMI', lines_color = ['black', 'limegreen', 'red',
-            'blue'], alpha_values = [1.0, 1.0, 1.0, 0.2], subplots = True)
-        
+        # the public interface for accessing the data of the indicator)    
+        super().__init__(input_data = input_data, 
+            ti_data = self._calculateIndicator(input_data),
+            indicator_name = 'DMI', plotted_input_columns = ['Adj Close'], 
+            y_label = 'DMI | Price', lines_color = ['black', 'limegreen', 'red',
+            'cornflowerblue'], alpha_values = [1.0, 1.0, 1.0, 0.2], 
+            subplots = True)
+
         
     def _calculateIndicator(self, input_data):
         '''
-        Calculates the DMI for the given input data.
+        Calculates the DMI technical indicator for the given input data.
     
         Args:
             input_data (pandas dataframe): The input data to the Technical 
@@ -429,22 +408,23 @@ class DMI(TI):
             -
 
         Returns:
-            integer: The Trading signal. Possible values are {'Hold': 0, 
-                'Buy': -1, 'Sell': 1}. See TRADE_SIGNALS package constant.
+            tuple (string, integer): The Trading signal. Possible values are 
+            ('Hold', 0), ('Buy', -1), ('Sell', 1). See TRADE_SIGNALS package 
+            constant.
         '''
         
         # A buy signal is given when DMI+ crosses above DMI-
         # A sell signal is given when DMI- crosses above DMI+
         if self._ti_data.iat[-2,0] > self._ti_data.iat[-2,1] and \
             self._ti_data.iat[-1,0] < self._ti_data.iat[-1,1]:
-            return TRADE_SIGNALS['Sell']
+            return ('Sell', TRADE_SIGNALS['Sell'])
             
         elif self._ti_data.iat[-2,0] < self._ti_data.iat[-2,1] and \
             self._ti_data.iat[-1,0] > self._ti_data.iat[-1,1]:
-            return TRADE_SIGNALS['Buy']
+            return ('Buy', TRADE_SIGNALS['Buy'])
             
         else:
-            return TRADE_SIGNALS['Hold']
+            return ('Hold', TRADE_SIGNALS['Hold'])
 
 
 class ADX(TI):
@@ -454,9 +434,9 @@ class ADX(TI):
 
     Args:
         df_data (pandas dataframe): The input data to the Technical Indicator.
-            Index is of type date. It contains the below columns:
-            'High', 'Low', 'Close', 'Adj Close'
-
+            Index is of type date. The indicator requires the following stock
+            data: 'High', 'Low', 'Close', 'Adj Close'
+            
     Attributes:
         -
                                 
@@ -464,47 +444,29 @@ class ADX(TI):
         -
         
     Raises:
-        - TypeError
-        - ValueError
+        TypeError (Raised from validateStockData method)
+        ValueError (Raised from validateStockData method)
         
     '''
     def __init__(self, df_data):
         
-        # Validate the input data, check tradingti.utils._data_validation module
-        # for details
-        data_validation = validateStockData(df_data)
-        if data_validation is not None:
-            raise(TypeError(data_validation))
-            
-        # Validate that all required input data are available
-        if 'High' not in df_data.columns:
-            raise(ValueError('Input \'High\' data are missing for ADX '    +\
-                'indicator use. Mandatory input data are: \'High\'.'))
-        elif 'Low' not in df_data.columns:
-            raise(ValueError('Input \'Low\' data are missing for ADX ' +\
-                'indicator use. Mandatory input data are: \'Low\'.'))
-        elif 'Close' not in df_data.columns:
-            raise(ValueError('Input \'Close\' data are missing for ADX ' +\
-                'indicator use. Mandatory input data are: \'Close\'.'))
-        elif 'Adj Close' not in df_data.columns:
-            raise(ValueError('Input \'Adj Close\' data are missing for ADX ' +\
-                'indicator use. Mandatory input data are: \'Adj Close\'.'))
-
-        # Sort the input data and fill the missing values if any
-        input_data = fillMissingValues(df_data)[['High', 'Low', 'Close', 
-            'Adj Close']]
+        # Validate and tranform the input data, check tradingti.utils.
+        # _data_validation module for more details
+        input_data = validateStockData(data = df_data, required_columns = 
+            ['High', 'Low', 'Close', 'Adj Close'], indicator_name = 'ADX')
 
         # Parent class constructor (all job is done here, parent class provides 
-        # the public interface for accessing the data of the indicator)
-        super().__init__(input_data = df_data['Adj Close'].to_frame(), 
+        # the public interface for accessing the data of the indicator)    
+        super().__init__(input_data = input_data, 
             ti_data = self._calculateIndicator(input_data),
-            indicator_name = 'ADX', lines_color = ['black', 'orange'], 
+            indicator_name = 'ADX', plotted_input_columns = ['Adj Close'], 
+            y_label = 'ADX | Price', lines_color = ['black', 'cornflowerblue'],
             subplots = True)
         
         
     def _calculateIndicator(self, input_data):
         '''
-        Calculates the ADX for the given input data.
+        Calculates the ADX technical indicator for the given input data.
     
         Args:
             input_data (pandas dataframe): The input data to the Technical 
@@ -539,21 +501,22 @@ class ADX(TI):
             -
 
         Returns:
-            integer: The Trading signal. Possible values are {'Hold': 0, 
-                'Buy': -1, 'Sell': 1}. See TRADE_SIGNALS package constant.
+            tuple (string, integer): The Trading signal. Possible values are 
+            ('Hold', 0), ('Buy', -1), ('Sell', 1). See TRADE_SIGNALS package 
+            constant.
         '''
 
         # Price drops and strong trend
         if self._input_data.iat[-3,0] > self._input_data.iat[-2,0] and \
             self._input_data.iat[-2,0] > self._input_data.iat[-1,0] and\
             self._ti_data.iat[-1,0] > 25:
-            return TRADE_SIGNALS['Sell']
+            return ('Sell', TRADE_SIGNALS['Sell'])
             
         # Price raises and strong trend
         elif self._input_data.iat[-3,0] < self._input_data.iat[-2,0] and\
             self._input_data.iat[-2,0] < self._input_data.iat[-1,0] and\
             self._ti_data.iat[-1,0] > 25:
-            return TRADE_SIGNALS['Buy']
+            return ('Buy', TRADE_SIGNALS['Buy'])
             
         else:
-            return TRADE_SIGNALS['Hold']
+            return ('Hold', TRADE_SIGNALS['Hold'])

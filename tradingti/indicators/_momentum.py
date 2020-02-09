@@ -12,7 +12,7 @@ enail: vsaveris@gmail.com
 
 License: MIT
 
-Date last modified: 01.02.2020
+Date last modified: 09.02.2020
 
 Python Version: 3.6
 '''
@@ -30,9 +30,9 @@ class FSO(TI):
 
     Args:
         df_data (pandas dataframe): The input data to the Technical Indicator.
-            Index is of type date. It contains the below columns:
-            'High', 'Low', 'Close', 'Adj Close'
-
+            Index is of type date. The indicator requires the following stock
+            data: 'High', 'Low', 'Close', 'Adj Close'
+            
     Attributes:
         -
                                 
@@ -40,45 +40,30 @@ class FSO(TI):
         -
         
     Raises:
-        - TypeError
-        - ValueError
+        TypeError (Raised from validateStockData method)
+        ValueError (Raised from validateStockData method)
         
     '''
     def __init__(self, df_data):
         
-        # Validate the input data, check tradingti.utils._data_validation module
-        # for details
-        data_validation = validateStockData(df_data)
-        if data_validation is not None:
-            raise(TypeError(data_validation))
-            
-        # Validate that all required input data are available
-        for c in ['High', 'Low', 'Close', 'Adj Close']:
-            if c not in df_data.columns:
-                raise(ValueError('Input \'' + c + '\' data are missing for FSO indicator use. '+\
-                'Mandatory input data are: \'High\', \'Low\', \'Close\', \'Adj Close\'.'))
-            
-        # Sort the input data and fill the missing values if any
-        df_data = fillMissingValues(df_data)
+        # Validate and tranform the input data, check tradingti.utils.
+        # _data_validation module for more details
+        input_data = validateStockData(data = df_data, required_columns = 
+            ['High', 'Low', 'Close', 'Adj Close'], indicator_name = 'FSO')
 
-        # Parent class constructor (all job is done here, parent class provides the public
-        # interface for accessing the data of the indicator)
-        super().__init__(input_data = df_data['Adj Close'], ti_data = self._calculateIndicator(df_data),
-            indicator_name = 'FSO', lines_color = ['cornflowerblue', 'tomato', 'limegreen'], subplots = True)
+        # Parent class constructor (all job is done here, parent class provides 
+        # the public interface for accessing the data of the indicator)    
+        super().__init__(input_data = input_data, 
+            ti_data = self._calculateIndicator(input_data),
+            indicator_name = 'FSO', plotted_input_columns = ['Adj Close'], 
+            y_label = 'Percentage | Price', lines_color = ['black', 
+            'cornflowerblue', 'tomato'], subplots = True)
             
     
     def _calculateIndicator(self, input_data):
         '''
-        Calculates the FSO for the given input data.
+        Calculates the FSO technical indicator for the given input data.
         
-        Fast oscillating %K = 100[(C - L14) / (H14 – L14)]
-        Where:
-        C = Latest Close
-        L14 = Lowest low for the last 14 periods.
-        H14 = Highest high for the same 14 periods
-
-        %D =  Three periods simple moving average of %K
-    
         Args:
             input_data (pandas dataframe): The input data to the Technical 
                 Indicator.
@@ -88,8 +73,8 @@ class FSO(TI):
 
         Returns:
             pandas dataframe: The calculated values of the Technical
-                indicator. Index is of type date. It contains one or two
-                columns depending the requested sma periods.
+                indicator. Index is of type date. It contains two columns the 
+                '%K', '%D'.
         '''
         
         fso = pd.DataFrame(index = input_data.index)
@@ -100,18 +85,22 @@ class FSO(TI):
         for i in range(13, len(input_data.index)):
 
             # Lowest low for the last 14 periods
-            L14 = min(input_data.iloc[i-13:i+1, input_data.columns.get_loc('Low')].values)
+            L14 = min(input_data.iloc[i-13:i+1, input_data.columns.
+                get_loc('Low')].values)
             
             # Highest high for the last 14 periods
-            H14 = max(input_data.iloc[i-13:i+1, input_data.columns.get_loc('High')].values)
+            H14 = max(input_data.iloc[i-13:i+1, input_data.columns.
+                get_loc('High')].values)
             
-            K.append(round(100*(input_data.iat[i, input_data.columns.get_loc('Close')] - L14)/(H14 - L14), 2))
+            K.append(round(100*(input_data.iat[i, input_data.columns.
+                get_loc('Close')] - L14)/(H14 - L14), 2))
         
         fso['%K'] = K
         
         # Moving average of fast oscillating (%D)
-        fso = pd.concat([fso, fso.rolling(window = 3, min_periods = 1, center = False,
-                win_type = None, on = None, axis = 0, closed = None).mean().round(2)], axis = 1)
+        fso = pd.concat([fso, fso.rolling(window = 3, min_periods = 1, 
+            center = False, win_type = None, on = None, axis = 0, closed = None)
+            .mean().round(2)], axis = 1)
         
         fso.columns = ['%K', '%D']
         
@@ -129,34 +118,36 @@ class FSO(TI):
             -
 
         Returns:
-            integer: The Trading signal. Possible values are {'Hold': 0, 
-                'Buy': -1, 'Sell': 1}. See TRADE_SIGNALS package constant.
+            tuple (string, integer): The Trading signal. Possible values are 
+            ('Hold', 0), ('Buy', -1), ('Sell', 1). See TRADE_SIGNALS package 
+            constant.
         '''
         
         # A sell signal is given when the oscillator is above the 80 level and 
         # then crosses back below 80.
         if self._ti_data.iat[-2, 0] > 80. and self._ti_data.iat[-1, 0] < 80.:
-            return TRADE_SIGNALS['Sell']
+            return ('Sell', TRADE_SIGNALS['Sell'])
         
-        # A buy signal is given when the oscillator is below 20 and then crosses back above 20. 
+        # A buy signal is given when the oscillator is below 20 and then crosses
+        # back above 20. 
         if self._ti_data.iat[-2, 0] < 20. and self._ti_data.iat[-1, 0] > 20.:
-            return TRADE_SIGNALS['Buy']
+            return ('Buy', TRADE_SIGNALS['Buy'])
         
-        # A sell signal occurs when a decreasing %K line crosses below the %D line 
-        # in the overbought region (%K > 80.) 
-        if self._ti_data.iat[-2, 0] - self._ti_data.iat[-1, 0] > 0. and\
-           self._ti_data.iat[-1, 0] - self._ti_data.iat[-1, 1] < 0. and\
+        # A sell signal occurs when a decreasing %K line crosses below the %D 
+        # line in the overbought region (%K > 80.) 
+        if self._ti_data.iat[-2, 0] - self._ti_data.iat[-1, 0] > 0. and \
+           self._ti_data.iat[-1, 0] - self._ti_data.iat[-1, 1] < 0. and \
            self._ti_data.iat[-1, 0] > 80.:
-            return TRADE_SIGNALS['Sell']
+            return ('Sell', TRADE_SIGNALS['Sell'])
             
-        # A buy signal occurs when an increasing %K line crosses above the %D line in the 
-        # oversold region (%K < 20.)
-        if self._ti_data.iat[-2, 0] - self._ti_data.iat[-1, 0] < 0. and\
-           self._ti_data.iat[-1, 0] - self._ti_data.iat[-1, 1] > 0. and\
+        # A buy signal occurs when an increasing %K line crosses above the %D 
+        # line in the  oversold region (%K < 20.)
+        if self._ti_data.iat[-2, 0] - self._ti_data.iat[-1, 0] < 0. and \
+           self._ti_data.iat[-1, 0] - self._ti_data.iat[-1, 1] > 0. and \
            self._ti_data.iat[-1, 0] < 20.:
-            return TRADE_SIGNALS['Buy']
+            return ('Buy', TRADE_SIGNALS['Buy'])
         
-        return TRADE_SIGNALS['Hold']
+        return ('Hold', TRADE_SIGNALS['Hold'])
         
         
 class SSO(TI):
@@ -165,9 +156,9 @@ class SSO(TI):
 
     Args:
         df_data (pandas dataframe): The input data to the Technical Indicator.
-            Index is of type date. It contains the below columns:
-            'High', 'Low', 'Close', 'Adj Close'
-
+            Index is of type date. The indicator requires the following stock
+            data: 'High', 'Low', 'Close', 'Adj Close'
+            
     Attributes:
         -
                                 
@@ -175,47 +166,30 @@ class SSO(TI):
         -
         
     Raises:
-        - TypeError
-        - ValueError
+        TypeError (Raised from validateStockData method)
+        ValueError (Raised from validateStockData method)
         
     '''
     def __init__(self, df_data):
         
-        # Validate the input data, check tradingti.utils._data_validation module
-        # for details
-        data_validation = validateStockData(df_data)
-        if data_validation is not None:
-            raise(TypeError(data_validation))
-            
-        # Validate that all required input data are available
-        for c in ['High', 'Low', 'Close', 'Adj Close']:
-            if c not in df_data.columns:
-                raise(ValueError('Input \'' + c + '\' data are missing for SSO indicator use. '+\
-                'Mandatory input data are: \'High\', \'Low\', \'Close\', \'Adj Close\'.'))
-            
-        # Sort the input data and fill the missing values if any
-        df_data = fillMissingValues(df_data)
+        # Validate and tranform the input data, check tradingti.utils.
+        # _data_validation module for more details
+        input_data = validateStockData(data = df_data, required_columns = 
+            ['High', 'Low', 'Close', 'Adj Close'], indicator_name = 'SSO')
 
-        # Parent class constructor (all job is done here, parent class provides the public
-        # interface for accessing the data of the indicator)
-        super().__init__(input_data = df_data['Adj Close'], ti_data = self._calculateIndicator(df_data),
-            indicator_name = 'SSO', lines_color = ['cornflowerblue', 'tomato', 'limegreen'], subplots = True)
+        # Parent class constructor (all job is done here, parent class provides 
+        # the public interface for accessing the data of the indicator)    
+        super().__init__(input_data = input_data, 
+            ti_data = self._calculateIndicator(input_data),
+            indicator_name = 'SSO', plotted_input_columns = ['Adj Close'], 
+            y_label = 'Percentage | Price', lines_color = ['black', 
+            'cornflowerblue', 'tomato'], subplots = True)
             
     
     def _calculateIndicator(self, input_data):
         
         '''
-        Calculates the SSO for the given input data.
-        
-        Slow oscillating %K= 100[Sum of the (C - L14) for three periods / 
-            Sum of the (H14 – L14) for three periods]
-
-        Where:
-        C = Latest Close
-        L14 = Lowest low for the last 14 periods
-        H14 = Highest high for the same 14 periods
-        
-        %D =  Three periods simple moving average of %K
+        Calculates the SSO technical indicator for the given input data.
     
         Args:
             input_data (pandas dataframe): The input data to the Technical 
@@ -226,8 +200,8 @@ class SSO(TI):
 
         Returns:
             pandas dataframe: The calculated values of the Technical
-                indicator. Index is of type date. It contains one or two
-                columns depending the requested sma periods.
+                indicator. Index is of type date. It contains two columns:
+                the '%K', '%D'.
         '''
         
         sso = pd.DataFrame(index = input_data.index)
@@ -242,19 +216,24 @@ class SSO(TI):
             sum_C_L14 = 0
             sum_H14_L14 = 0
             for j in range(3):
-                L14 = min(input_data.iloc[i-13-j:i-j+1, input_data.columns.get_loc('Low')].values)
-                H14 = max(input_data.iloc[i-13-j:i-j+1, input_data.columns.get_loc('High')].values)
+                L14 = min(input_data.iloc[i-13-j:i-j+1, input_data.columns.
+                    get_loc('Low')].values)
+                H14 = max(input_data.iloc[i-13-j:i-j+1, input_data.columns.
+                    get_loc('High')].values)
                 
                 sum_H14_L14 += H14 - L14
-                sum_C_L14 += input_data.iat[i-j, input_data.columns.get_loc('Close')] - L14
+                sum_C_L14 += input_data.iat[i-j, input_data.columns.
+                    get_loc('Close')] - L14
             
             K.append(round(100*sum_C_L14/sum_H14_L14, 2))
         
         sso['%K'] = K
         
         # Moving average of slow oscillating (%D)
-        sso = pd.concat([sso, sso.rolling(window = 3, min_periods = 1, center = False,
-                win_type = None, on = None, axis = 0, closed = None).mean().round(2)], axis = 1)
+        sso = pd.concat([sso, sso.rolling(window = 3, min_periods = 1, 
+            center = False,
+                win_type = None, on = None, axis = 0, closed = None).mean().
+                    round(2)], axis = 1)
         
         sso.columns = ['%K', '%D']
         
@@ -272,34 +251,36 @@ class SSO(TI):
             -
 
         Returns:
-            integer: The Trading signal. Possible values are {'Hold': 0, 
-                'Buy': -1, 'Sell': 1}. See TRADE_SIGNALS package constant.
+            tuple (string, integer): The Trading signal. Possible values are 
+            ('Hold', 0), ('Buy', -1), ('Sell', 1). See TRADE_SIGNALS package 
+            constant.
         '''
 
         # A sell signal is given when the oscillator is above the 80 level and 
         # then crosses back below 80.
         if self._ti_data.iat[-2, 0] > 80. and self._ti_data.iat[-1, 0] < 80.:
-            return TRADE_SIGNALS['Sell']
+            return ('Sell', TRADE_SIGNALS['Sell'])
         
-        # A buy signal is given when the oscillator is below 20 and then crosses back above 20. 
+        # A buy signal is given when the oscillator is below 20 and then crosses 
+        # back above 20. 
         if self._ti_data.iat[-2, 0] < 20. and self._ti_data.iat[-1, 0] > 20.:
-            return TRADE_SIGNALS['Buy']
+            return ('Buy', TRADE_SIGNALS['Buy'])
         
-        # A sell signal occurs when a decreasing %K line crosses below the %D line 
-        # in the overbought region (%K > 80.) 
+        # A sell signal occurs when a decreasing %K line crosses below the %D 
+        # line in the overbought region (%K > 80.) 
         if self._ti_data.iat[-2, 0] - self._ti_data.iat[-1, 0] > 0. and\
            self._ti_data.iat[-1, 0] - self._ti_data.iat[-1, 1] < 0. and\
            self._ti_data.iat[-1, 0] > 80.:
-            return TRADE_SIGNALS['Sell']
+            return ('Sell', TRADE_SIGNALS['Sell'])
             
-        # A buy signal occurs when an increasing %K line crosses above the %D line in the 
-        # oversold region (%K < 20.)
+        # A buy signal occurs when an increasing %K line crosses above the %D 
+        # line in the oversold region (%K < 20.)
         if self._ti_data.iat[-2, 0] - self._ti_data.iat[-1, 0] < 0. and\
            self._ti_data.iat[-1, 0] - self._ti_data.iat[-1, 1] > 0. and\
            self._ti_data.iat[-1, 0] < 20.:
-            return TRADE_SIGNALS['Buy']
+            return ('Buy', TRADE_SIGNALS['Buy'])
         
-        return TRADE_SIGNALS['Hold']
+        return ('Hold', TRADE_SIGNALS['Hold'])
 
 
 class RSI(TI):
@@ -308,66 +289,58 @@ class RSI(TI):
 
     Args:
         df_data (pandas dataframe): The input data to the Technical Indicator.
-            Index is of type date. It contains the following column: 'Adj Close'
+            Index is of type date.  The indicator requires the following stock
+            data: 'Adj Close'
             
         look_back (int): Look back days for calculating the averages needed by
             the indicator. Default value is 14.
-
+            
     Attributes:
-        -
+        _look_back (int): Look back days for calculating the averages needed by
+            the indicator.
                                 
     Methods:
         -
         
     Raises:
-        - TypeError
-        - ValueError
+        TypeError (Raised from validateStockData method)
+        ValueError (Raised from validateStockData method)
         
     '''
     def __init__(self, df_data, look_back = 14):
         
-        # Validate the input data, check tradingti.utils._data_validation module
-        # for details
-        data_validation = validateStockData(df_data)
-        if data_validation is not None:
-            raise(TypeError(data_validation))
-            
-        # Validate that all required input data are available
-        if 'Adj Close' not in df_data.columns:
-            raise(ValueError('Input \'Adj Close\' data are missing for BB ' +\
-                'indicator use. Mandatory input data are: \'Adj Close\'.'))
-                
+        # Validate and tranform the input data, check tradingti.utils.
+        # _data_validation module for more details
+        input_data = validateStockData(data = df_data, required_columns = 
+            ['Adj Close'], indicator_name = 'RSI')
+
+        # Validate look_back values
         if type(look_back) != int or look_back <= 0 or \
             look_back > len(df_data.index):
-            raise(ValueError('\'look_back\' argument should be a positive ' +\
-                'integer less than the number of input periods (' +\
+            raise(ValueError('`look_back` argument should be a positive ' +\
+                'integer less than the number of input periods ('         +\
                 str(len(df_data.index))+ '), but look_back = ' +\
                 str(look_back) + '.'))
                 
         self._look_back = look_back
-            
-        # Sort the input data and fill the missing values if any
-        df_data = fillMissingValues(df_data)
-
+        
         # Parent class constructor (all job is done here, parent class provides 
-        # the public interface for accessing the data of the indicator)
-        super().__init__(input_data = df_data['Adj Close'], 
-            ti_data = self._calculateIndicator(df_data),
+        # the public interface for accessing the data of the indicator)    
+        super().__init__(input_data = input_data, 
+            ti_data = self._calculateIndicator(input_data),
             indicator_name = 'RSI-' + str(self._look_back), 
-            lines_color = ['cornflowerblue', 'tomato'], subplots = True)
+            plotted_input_columns = ['Adj Close'], y_label = 'RSI | Price', 
+            lines_color = ['black', 'tomato'], subplots = True)
             
     
     def _calculateIndicator(self, input_data):
         
         '''
-        Calculates the RSI for the given input data.
+        Calculates the RSI technical indicator for the given input data.
             
         Args:
             input_data (pandas dataframe): The input data to the Technical 
                 Indicator.
-                
-            RSI = 100 – [100 / ( 1 + (Average of Upward Price Change / 
-                Average of Downward Price Change ) ) ]
 
         Raises:
             -
@@ -422,19 +395,20 @@ class RSI(TI):
             -
 
         Returns:
-            integer: The Trading signal. Possible values are {'Hold': 0, 
-                'Buy': -1, 'Sell': 1}. See TRADE_SIGNALS package constant.
+            tuple (string, integer): The Trading signal. Possible values are 
+            ('Hold', 0), ('Buy', -1), ('Sell', 1). See TRADE_SIGNALS package 
+            constant.
         '''
 
         # Overbought region
         if self._ti_data.iat[-2, 0] < 70. and self._ti_data.iat[-1, 0] > 70.:
-            return TRADE_SIGNALS['Sell']
+            return ('Sell', TRADE_SIGNALS['Sell'])
         
         # Oversold region
         if self._ti_data.iat[-2, 0] > 30. and self._ti_data.iat[-1, 0] < 30.:
-            return TRADE_SIGNALS['Buy']
+            return ('Buy', TRADE_SIGNALS['Buy'])
         
-        return TRADE_SIGNALS['Hold']
+        return ('Hold', TRADE_SIGNALS['Hold'])
         
         
 class IC(TI):
@@ -443,9 +417,9 @@ class IC(TI):
 
     Args:
         df_data (pandas dataframe): The input data to the Technical Indicator.
-            Index is of type date. It contains the below columns:
-            'High', 'Low', 'Close', 'Adj Close'
-
+            Index is of type date. The indicator requires the following stock
+            data: 'High', 'Low', 'Close', 'Adj Close'
+            
     Attributes:
         -
                                 
@@ -453,50 +427,33 @@ class IC(TI):
         -
         
     Raises:
-        - TypeError
-        - ValueError
+        TypeError (Raised from validateStockData method)
+        ValueError (Raised from validateStockData method)
         
     '''
     def __init__(self, df_data):
         
-        # Validate the input data, check tradingti.utils._data_validation module
-        # for details
-        data_validation = validateStockData(df_data)
-        if data_validation is not None:
-            raise(TypeError(data_validation))
-            
-        # Validate that all required input data are available
-        for c in ['High', 'Low', 'Close', 'Adj Close']:
-            if c not in df_data.columns:
-                raise(ValueError('Input \'' + c + '\' data are missing for FSO indicator use. '+\
-                'Mandatory input data are: \'High\', \'Low\', \'Close\', \'Adj Close\'.'))
-            
-        # Sort the input data and fill the missing values if any
-        df_data = fillMissingValues(df_data)
-        ti_data = self._calculateIndicator(df_data)
-        self._input_data = df_data
+        # Validate and tranform the input data, check tradingti.utils.
+        # _data_validation module for more details
+        input_data = validateStockData(data = df_data, required_columns = 
+            ['High', 'Low', 'Close', 'Adj Close'], indicator_name = 'IC')
+
+        ti_data = self._calculateIndicator(input_data) # used in areas below
         
-        # Parent class constructor (all job is done here, parent class provides the public
-        # interface for accessing the data of the indicator)
-        super().__init__(input_data = df_data['Adj Close'], ti_data = ti_data,
-            indicator_name = 'IC', lines_color = ['black', 'cornflowerblue', 
-            'tomato', 'limegreen', 'orange', 'purple'], subplots = False,
-            areas = [{'x': ti_data.index, 'y1': ti_data['Senkou A'], 
-            'y2': ti_data['Senkou B'], 'color': 'lightblue'}])
+        # Parent class constructor (all job is done here, parent class provides 
+        # the public interface for accessing the data of the indicator)    
+        super().__init__(input_data = input_data, 
+            ti_data = ti_data, indicator_name = 'IC', plotted_input_columns = 
+            ['Adj Close'], y_label = 'Price', lines_color = ['black', 
+            'cornflowerblue', 'tomato', 'limegreen', 'orange', 'purple'], 
+            areas = [{'x': ti_data.index, 'y1': ti_data['Senkou A'], 'y2': 
+            ti_data['Senkou B'], 'color': 'lightblue'}], subplots = False)
             
     
     def _calculateIndicator(self, input_data):
         '''
-        Calculates the IC for the given input data.
+        Calculates the IC technical indicator for the given input data.
         
-        - TenkanSen (Conversion Line): (High + Low) / 2 default period = 9
-        - KijunSen (Base Line): (High + Low) / 2 default period = 26 
-        - Chiku Span (Lagging Span): Price Close shifted back 26 bars 
-        - Senkou A (Leading Span A): (TenkanSen + KijunSen) / 2 (Senkou A is 
-            shifted forward 26 bars) 
-        - Senkou B (Leading Span B): (High + Low) / 2 using period = 52 (Senkou 
-            B is shifted forward 26 bars)
-    
         Args:
             input_data (pandas dataframe): The input data to the Technical 
                 Indicator.
@@ -506,8 +463,8 @@ class IC(TI):
 
         Returns:
             pandas dataframe: The calculated values of the Technical
-                indicator. Index is of type date. It contains one or two
-                columns depending the requested sma periods.
+                indicator. Index is of type date. It contains the columns
+                'Tenkan Sen', 'Kijun Sen', 'Senkou A', 'Senkou B'.
         '''
         
         # Build the indicator's dataframe 
@@ -563,13 +520,7 @@ class IC(TI):
     def getSignal(self):
         '''
         Calculates and returns the signal of the technical indicator.
-        
-        - A buy signal is reinforced when the Tenkan Sen crosses above the Kijun 
-        Sen while the Tenkan Sen, Kijun Sen, and price are all above the cloud.
-        - A sell signal is reinforced when the TenKan Sen crosses below the 
-        Kijun Sen while the Tenkan Sen, Kijun Sen, and price are all below the 
-        cloud.
-    
+
         Args:
             -
 
@@ -577,10 +528,13 @@ class IC(TI):
             -
 
         Returns:
-            integer: The Trading signal. Possible values are {'Hold': 0, 
-                'Buy': -1, 'Sell': 1}. See TRADE_SIGNALS package constant.
+            tuple (string, integer): The Trading signal. Possible values are 
+            ('Hold', 0), ('Buy', -1), ('Sell', 1). See TRADE_SIGNALS package 
+            constant.
         '''
 
+        # A buy signal is reinforced when the Tenkan Sen crosses above the Kijun 
+        # Sen while the Tenkan Sen, Kijun Sen, and price are all above the cloud
         if self._ti_data.iat[-1,0] > self._ti_data.iat[-1,1] and \
             self._whereInCloud(self._input_data['Adj Close'].to_frame().iat[-1,0], 
             [self._ti_data.iat[-1,2], self._ti_data.iat[-1,3]]) == 1 and \
@@ -588,8 +542,12 @@ class IC(TI):
             [self._ti_data.iat[-1,2], self._ti_data.iat[-1,3]]) == 1 and \
             self._whereInCloud(self._ti_data.iat[-1,1], 
             [self._ti_data.iat[-1,2], self._ti_data.iat[-1,3]]) == 1:
-            return TRADE_SIGNALS['Buy']
+            return ('Buy', TRADE_SIGNALS['Buy'])
             
+        
+        # A sell signal is reinforced when the TenKan Sen crosses below the 
+        # Kijun Sen while the Tenkan Sen, Kijun Sen, and price are all below the 
+        # cloud.
         if self._ti_data.iat[-1,0] < self._ti_data.iat[-1,1] and \
             self._whereInCloud(self._input_data['Adj Close'].to_frame().iat[-1,0], 
             [self._ti_data.iat[-1,2], self._ti_data.iat[-1,3]]) == -1 and \
@@ -597,8 +555,6 @@ class IC(TI):
             [self._ti_data.iat[-1,2], self._ti_data.iat[-1,3]]) == -1 and \
             self._whereInCloud(self._ti_data.iat[-1,1], 
             [self._ti_data.iat[-1,2], self._ti_data.iat[-1,3]]) == -1:
-            return TRADE_SIGNALS['Buy']
+            return ('Sell', TRADE_SIGNALS['Sell'])
             
-        return TRADE_SIGNALS['Hold']
-        
-        
+        return ('Hold', TRADE_SIGNALS['Hold'])

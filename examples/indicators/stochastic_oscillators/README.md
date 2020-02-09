@@ -10,7 +10,6 @@ The Stochastic Oscillators Technical Indicators implemented are:
 #### FSO Technical Indicator example
 ```
 $python indicators_fso.py
-
 - Graph ../figures/indicators_fso_example.png saved.
 
 FSO data:
@@ -34,7 +33,7 @@ FSO value at 2012-09-06: [72.3, 68.14]
 
 FSO value at 2012-09-12 00:00:00 : [5.65, 13.19]
 
-Signal: Hold [ 0 ]
+Signal: ('Hold', 0)
 ```
 
 The script generates the below plots:
@@ -46,7 +45,6 @@ The script generates the below plots:
 ### SSO Technical Indicator example
 ```
 $python indicators_sso.py
-
 - Graph ../figures/indicators_sso_example.png saved.
 
 SSO data:
@@ -70,7 +68,7 @@ SSO value at 2012-09-06: [67.72, 62.82]
 
 SSO value at 2012-09-12 00:00:00 : [13.09, 37.88]
 
-Signal: Hold [ 0 ]
+Signal: ('Hold', 0)
 ```
 
 The script generates the below plots:
@@ -80,7 +78,7 @@ The script generates the below plots:
 
 ## Prerequisites
 1. python: `version 3.6` or later
-2. tradingti library: `latest commit in master branch`
+2. tradingti library: `version 0.1` or later
 3. matplotlib: `version 3.1.2` or later
 4. pandas: `version 0.25.3` or later
 

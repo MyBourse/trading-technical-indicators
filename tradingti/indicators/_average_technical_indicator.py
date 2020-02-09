@@ -39,24 +39,21 @@ class AverageTI(TI):
                 
         periods (object): The periods (rolling windows, span periods, etc.) for 
             which the technical indicator is calculated. Is a list of integers, 
-            with one (representing the long term MA) or two (representing the short term
-            and the long term MA) members at most.
+            with one (representing the long term MA) or two (representing the 
+            short term and the long term MA) members at most.
 
     Attributes:
-        _input_data (pandas dataframe): The input data to the Technical Indicator.
-            
-        _ti_data (pandas dataframe): The calculated values of the Technical
-            indicator.
-            
         _indicator_name (string): The name of the Technical Indicator.
             
-        _periods (list of integers): The periods (rolling windows, span periods, etc.) 
-            for which the technical indicator is calculated.
+        _periods (list of integers): The periods (rolling windows, span periods,
+            etc.) for which the technical indicator is calculated.
                                 
     Methods:
-        _inputValidation(): Validates the input to the SMA Technical Indicator data.
+        _inputValidation(): Validates the input to the SMA Technical Indicator 
+            data.
     
-        getSignal(): Calculates and returns the signal of the technical indicator.
+        getSignal(): Calculates and returns the signal of the technical 
+            indicator.
         
     Raises:
         TypeError()
@@ -66,37 +63,27 @@ class AverageTI(TI):
     def __init__(self, df_data, calculate_MA, indicator_name, lines_color,
         periods):
 
-        # Validate the input data, check tradingti.utils._data_validation module
-        # for details
-        data_validation = validateStockData(df_data)
-        if data_validation is not None:
-            raise(TypeError(data_validation))
-        
-        # Validate that all required input data are available
-        if 'Adj Close' not in df_data.columns:
-            raise(ValueError('Input \'Adj Close\' data are missing for MA indicator use. '+\
-                'Mandatory input data are: \'Adj Close\'.'))
-            
-        # Sort the input data and fill the missing values if any
-        df_data = fillMissingValues(df_data)
+        # Validate and tranform the input data, check tradingti.utils.
+        # _data_validation module for more details
+        input_data = validateStockData(data = df_data, required_columns = 
+            ['Adj Close'], indicator_name = indicator_name)
         
         # Validate the MA input (specific to the indicator)
         self._inputValidation(df_data, periods)
             
         # If contains only one member, this is considered as long term SMA
-        # If contains two members, then the larger value is considered as the long term SMA
-        # and the shorter one is considered as the short term SMA
+        # If contains two members, then the larger value is considered as the 
+        # long term SMA and the shorter one is considered as the short term SMA
         self._periods = periods
-        
         self._indicator_name = indicator_name
-        
-        self._input_data = df_data
-        self._ti_data = calculate_MA(self._input_data)
-        
-        # Parent class constructor (all job is done here, parent class provides the public
-        # interface for accessing the data of the indicator)
-        super().__init__(input_data = self._input_data, ti_data = self._ti_data, 
-            indicator_name = indicator_name, lines_color = lines_color)
+            
+        # Parent class constructor (all job is done here, parent class provides 
+        # the public interface for accessing the data of the indicator)    
+        super().__init__(input_data = input_data, 
+            ti_data = calculate_MA(input_data), indicator_name = indicator_name, 
+            plotted_input_columns = ['Adj Close'], y_label = 'Price', 
+            lines_color = lines_color, alpha_values = [0.5] + \
+            [1.0] * len(self._periods), subplots = False)
         
     
     def _inputValidation(self, df_data, periods):
@@ -158,8 +145,9 @@ class AverageTI(TI):
             -
 
         Returns:
-            integer: The Trading signal. Possible values are {'Hold': 0, 
-                'Buy': -1, 'Sell': 1}. See TRADE_SIGNALS package constant.
+            tuple (string, integer): The Trading signal. Possible values are 
+            ('Hold', 0), ('Buy', -1), ('Sell', 1). See TRADE_SIGNALS package 
+            constant.
         '''
 
         # Signal from long term MA
@@ -216,4 +204,5 @@ class AverageTI(TI):
             if abs(signal) == 2:
                 signal = signal / 2
  
-        return signal
+        return (list(TRADE_SIGNALS.keys())[list(TRADE_SIGNALS.values()).
+            index(signal)], signal) 

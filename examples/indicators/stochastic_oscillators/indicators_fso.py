@@ -14,18 +14,17 @@ Python Version: 3.6
 '''
 
 import pandas as pd
-from pandas.plotting import register_matplotlib_converters
-# Converters used in parsing the dates from csv
-register_matplotlib_converters()
-
 from tradingti.indicators import FSO
-import tradingti as tti
+
+# Future Warning matplotlib
+from pandas.plotting import register_matplotlib_converters
+register_matplotlib_converters()
 
 # Read data from csv file. Set the index to the correct column (dates column)
 df = pd.read_csv('../data/sample_data.csv', parse_dates = True, index_col = 0)
 
 # Calculate the FSO indicator
-fso = FSO(df.sort_index(ascending = True).loc['2012-01-01':, ['High', 'Low', 'Close', 'Adj Close']])
+fso = FSO(df[df.index >= '2012-01-01'])
 
 # Save the plot of the calculated Technical Indicator
 fso.getTiPlot().savefig('../figures/indicators_fso_example.png')
@@ -41,7 +40,4 @@ print('\nFSO value at 2012-09-06:', fso.getTiValue('2012-09-06'))
 print('\nFSO value at', df.index[0], ':', fso.getTiValue())
 
 # Get signal from FSO
-signal = fso.getSignal()
-for key, value in tti.TRADE_SIGNALS.items(): 
-    if value == signal:
-        print('\nSignal:', key, '[', value, ']')
+print('\nSignal:', fso.getSignal())

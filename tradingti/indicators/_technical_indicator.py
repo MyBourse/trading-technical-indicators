@@ -171,8 +171,9 @@ class TI(ABC):
     def getSignal(self):
         '''
         Abstract method for Technical Indicator signal calculation. The
-        implemented method should return an integer representing the Trading 
-        signal. Possible values are {'Hold': 0, 'Buy': -1, 'Sell': 1}
+        implemented method should return a tuple (string, integer), the Trading 
+        signal. Possible values are ('Hold', 0), ('Buy', -1), ('Sell', 1). See 
+        TRADE_SIGNALS package constant.
     
         Args:
             -

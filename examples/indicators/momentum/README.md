@@ -10,17 +10,16 @@ The Momentum Technical Indicators implemented are:
 #### RSI Technical Indicator example
 ```
 $python indicators_rsi.py
-
 - Graph ../figures/indicators_rsi_example.png saved.
 
 RSI data:
                  RSI
 Date
-2011-01-03      NaN
-2011-01-04      NaN
-2011-01-05      NaN
-2011-01-06      NaN
-2011-01-07      NaN
+2012-01-03      NaN
+2012-01-04      NaN
+2012-01-05      NaN
+2012-01-06      NaN
+2012-01-09      NaN
 ...             ...
 2012-09-06  65.8824
 2012-09-07  65.4762
@@ -28,13 +27,13 @@ Date
 2012-09-11  47.4003
 2012-09-12  36.0116
 
-[428 rows x 1 columns]
+[176 rows x 1 columns]
 
 RSI value at 2012-09-06: [65.88235294117652]
 
 RSI value at 2012-09-12 00:00:00 : [36.011616650532375]
 
-Signal: Hold [ 0 ]
+Signal: ('Hold', 0)
 ```
 
 The script generates the below plots:
@@ -68,7 +67,7 @@ IC value at 2012-09-06: [142.5, 143.41, 144.85250000000002, 142.865]
 
 IC value at 2012-09-12 00:00:00 : [142.52999999999997, 141.39999999999998, 145.65249999999997, 142.865]
 
-Signal: Hold [ 0 ]
+Signal: ('Hold', 0)
 ```
 
 The script generates the below plots:
@@ -78,7 +77,7 @@ The script generates the below plots:
 
 ## Prerequisites
 1. python: `version 3.6` or later
-2. tradingti library: `latest commit in master branch`
+2. tradingti library: `version 0.1` or later
 3. matplotlib: `version 3.1.2` or later
 4. pandas: `version 0.25.3` or later
 

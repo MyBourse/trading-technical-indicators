@@ -33,7 +33,7 @@ ADX value at 2012-09-06: [30.1149862442006]
 
 ADX value at 2012-09-12 00:00:00 : [32.771842584627706]
 
-Signal: Sell [ 1 ]
+Signal: ('Sell', 1)
 ```
 
 The script generates the below plots:
@@ -67,7 +67,7 @@ DMI value at 2012-09-06: [20.03108164270775, 15.79584999923614, 11.8213630064631
 
 DMI value at 2012-09-12 00:00:00 : [13.454620921936474, 35.278207204881014, 44.78210504457693]
 
-Signal: Hold [ 0 ]
+Signal: ('Hold', 0)
 ```
 
 The script generates the below plots:
@@ -77,7 +77,7 @@ The script generates the below plots:
 
 ## Prerequisites
 1. python: `version 3.6` or later
-2. tradingti library: `latest commit in master branch`
+2. tradingti library: `version 0.1` or later
 3. matplotlib: `version 3.1.2` or later
 4. pandas: `version 0.25.3` or later
 

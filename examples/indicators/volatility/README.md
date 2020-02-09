@@ -10,7 +10,6 @@ The Volatility Technical Indicators implemented are:
 #### BB Technical Indicator example
 ```
 $python indicators_bb.py
-
 - Graph ../figures/indicators_bb_long_example.png saved.
 - Graph ../figures/indicators_bb_short_example.png saved.
 - Graph ../figures/indicators_bb_medium_example.png saved.
@@ -36,7 +35,7 @@ BB value at 2012-09-06: [141.81449999999995, 154.0508497570404, 129.578150242959
 
 BB value at 2012-09-12 00:00:00 : [142.28949999999995, 154.5258497570404, 130.0531502429595]
 
-Signal: Hold [ 0 ]
+Signal: ('Hold', 0)
 ```
 
 The script generates the below plots:
@@ -56,27 +55,27 @@ $python indicators_sd.py
 - Graph ../figures/indicators_sd_20_example.png saved.
 
 SD data:
-                  SD
+              SD
 Date
-2012-01-03      NaN
-2012-01-04      NaN
-2012-01-05      NaN
-2012-01-06      NaN
-2012-01-09      NaN
-...             ...
-2012-09-06  1.69038
-2012-09-07  1.68048
-2012-09-10  1.64328
-2012-09-11  1.52033
-2012-09-12  1.33202
+2012-01-03  NaN
+2012-01-04  NaN
+2012-01-05  NaN
+2012-01-06  NaN
+2012-01-09  NaN
+...         ...
+2012-09-06  NaN
+2012-09-07  NaN
+2012-09-10  NaN
+2012-09-11  NaN
+2012-09-12  NaN
 
 [176 rows x 1 columns]
 
-SD value at 2012-09-06: [1.6903767098054314]
+SD value at 2012-09-06: [nan]
 
-SD value at 2012-09-12 00:00:00 : [1.3320165756831792]
+SD value at 2012-09-12 00:00:00 : [nan]
 
-Signal: Hold [ 0 ]
+Signal: ('Hold', 0)
 ```
 
 The script generates the below plot:
@@ -86,7 +85,7 @@ The script generates the below plot:
 
 ## Prerequisites
 1. python: `version 3.6` or later
-2. tradingti library: `latest commit in master branch`
+2. tradingti library: `version 0.1` or later
 3. matplotlib: `version 3.1.2` or later
 4. pandas: `version 0.25.3` or later
 

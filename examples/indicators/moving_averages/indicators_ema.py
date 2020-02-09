@@ -14,18 +14,17 @@ Python Version: 3.6
 '''
 
 import pandas as pd
-from pandas.plotting import register_matplotlib_converters
-# Converters used in parsing the dates from csv
-register_matplotlib_converters()
-
 from tradingti.indicators import EMA
-import tradingti as tti
+
+# Future Warning matplotlib
+from pandas.plotting import register_matplotlib_converters
+register_matplotlib_converters()
 
 # Read data from csv file. Set the index to the correct column (dates column)
 df = pd.read_csv('../data/sample_data.csv', parse_dates = True, index_col = 0)
 
-# Calculate the EMA indicator for span period = 200
-ema = EMA(df['Adj Close'].to_frame(), span_periods = [200])
+# Calculate the EMA indicator
+ema = EMA(df[df.index >= '2011-01-01'], span_periods = [200])
 
 # Save the plot of the calculated Technical Indicator
 ema.getTiPlot().savefig('../figures/indicators_ema_200_example.png')
@@ -34,7 +33,7 @@ print('- Graph ../figures/indicators_ema_200_example.png saved.')
 
 # Calculate the EMA indicator for the default span periods (short term ema = 26,
 # long term ema = 200) 
-ema = EMA(df[['Adj Close']])
+ema = EMA(df[df.index >= '2011-01-01'])
 
 # Save the plot of the calculated Technical Indicator
 ema.getTiPlot().savefig('../figures/indicators_ema_50_200_example.png')
@@ -50,7 +49,4 @@ print('\nEMA value at 2012-09-06:', ema.getTiValue('2012-09-06'))
 print('\nEMA value at', df.index[0], ':', ema.getTiValue())
 
 # Get signal from EMA
-signal = ema.getSignal()
-for key, value in tti.TRADE_SIGNALS.items(): 
-    if value == signal:
-        print('\nSignal:', key, '[', value, ']')
+print('\nSignal:', ema.getSignal())
