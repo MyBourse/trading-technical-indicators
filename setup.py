@@ -5,7 +5,7 @@ with open('README.md', 'r') as fh:
 
 setuptools.setup(
     name = 'trading-technical-indicators',
-    version = '1.0.5',
+    version = '0.0.3',
     author= 'Vasileios Saveris',
     author_email = 'vsaveris@gmail.com',
     description = 'Trading Technical Indicators, Open Source Library, in Python',
