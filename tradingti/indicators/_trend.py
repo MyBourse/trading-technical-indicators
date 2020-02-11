@@ -55,6 +55,10 @@ class SMA(AverageTI):
     '''
     def __init__(self, df_data, sma_periods = [50, 200]):
 
+        # If not list, make it. Value validation will follow from parent class
+        if type(sma_periods) != list:
+            sma_periods = [sma_periods]
+            
         self._sma_periods = sma_periods
         
         if len(sma_periods) == 1:
@@ -126,6 +130,10 @@ class EMA(AverageTI):
         
     '''
     def __init__(self, df_data, span_periods = [26, 200]):
+        
+        # If not list, make it. Value validation will follow from parent class
+        if type(span_periods) != list:
+            span_periods = [span_periods]
         
         self._span_periods = span_periods
 

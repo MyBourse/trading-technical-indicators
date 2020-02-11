@@ -25,8 +25,8 @@ class AverageTI(TI):
 
     Args:
         df_data (pandas dataframe): The input data to the Technical Indicator.
-            Index is of type date. It contains one column with the Adjusted
-            Closed price of a given stock.
+            Index is of type date. The indicator requires the following stock
+            data: 'Adj Close'
             
         calculate_MA (object method): Reference to a method in child class, 
             which calculates the MA for the given input data.
@@ -56,7 +56,7 @@ class AverageTI(TI):
             indicator.
         
     Raises:
-        TypeError()
+        TypeError
         
     '''
     
@@ -71,9 +71,9 @@ class AverageTI(TI):
         # Validate the MA input (specific to the indicator)
         self._inputValidation(df_data, periods)
             
-        # If contains only one member, this is considered as long term SMA
+        # If contains only one member, this is considered as long term MA
         # If contains two members, then the larger value is considered as the 
-        # long term SMA and the shorter one is considered as the short term SMA
+        # long term MA and the shorter one is considered as the short term MA
         self._periods = periods
         self._indicator_name = indicator_name
             
@@ -91,16 +91,16 @@ class AverageTI(TI):
         Validates the input to the MA Technical Indicator data.
     
         Args:
-            df_data (pandas dataframe): The input data to the Technical Indicator.
-                Index is of type date. It contains one column with the Adjusted
-                Closed price of a given stock.
+            df_data (pandas dataframe): The input data to the Technical 
+                Indicator. Index is of type date. The indicator requires the 
+                following stock data: 'Adj Close'
                 
-            periods (object): The periods (rolling windows, span periods, etc.) for 
-            which the technical indicator is calculated.
+            periods (object): The periods (rolling windows, span periods, etc.) 
+                for which the technical indicator is calculated.
 
         Raises:
-            TypeError()
-            ValueError()
+            TypeError
+            ValueError
 
         Returns:
             -
@@ -108,29 +108,32 @@ class AverageTI(TI):
         
         # Validate that the periods is a list
         if not isinstance(periods, list):
-            message = 'periods must be a list of one or two positive integers. '+\
-                'periods_type = ' + str(type(periods)) + '.'          
+            message = 'periods must be a list of one or two positive ' +\
+                'integers. periods_type = ' + str(type(periods)) + '.'       
             raise(TypeError(message))
         
-        # Validate that the periods is valid (not empty list of postive integers)
+        # Validate that the periods is valid (not empty list of postive 
+        # integers)
         if len(periods) == 0 or len(periods) > 2:
-            message = 'periods must contain one or two positive integers with values' +\
-                'less than the number of the input data points. '+\
-                'periods = ' + str(periods) + ' contains ' + str(len(periods)) + '.'           
+            message = 'periods must contain one or two positive integers '    +\
+                'with values less than the number of the input data points. ' +\
+                'periods = ' + str(periods) + ' contains ' + str(len(periods))+\
+                '.'           
             raise(ValueError(message))
             
         for period in periods:
             if not isinstance(period, int) or period <= 0:
-                message = 'periods must contain only positive integers. '+\
-                    'periods = ' + str(periods) + ', ' + str(period) +\
-                    ' is not a valid positive integer.' 
+                message = 'periods must contain only positive integers. '    +\
+                    'periods = ' + str(periods) + ', `' + str(period) + '` ' +\
+                    'is not a valid positive integer.' 
                 raise ValueError(message)
         
         # Validate that period is less than the number of the data points
         for period in periods:
             if len(df_data.index) < period:
-                message = 'period should be less than the number of the data points.'+\
-                    ' period = ' + str(period) + ' < ' + str(len(df_data.index)) + '.'
+                message = 'period should be less than the number of the data '+\
+                    'points. period = ' + str(period) + ' > ' +\
+                    str(len(df_data.index)) + '.'
                 raise(ValueError(message))
 
     
@@ -149,60 +152,55 @@ class AverageTI(TI):
             ('Hold', 0), ('Buy', -1), ('Sell', 1). See TRADE_SIGNALS package 
             constant.
         '''
-
-        # Signal from long term MA
-        long_term_MA = max(self._periods)
         
-        # Prices crosses the long term MA
-        if (self._input_data.iat[-2, 0] - self._ti_data.at[self._ti_data.index[-2], 
-            self._indicator_name.split('-')[0] + '-' + str(long_term_MA)]) *\
-           (self._input_data.iat[-1, 0] - self._ti_data.at[self._ti_data.index[-1], 
-            self._indicator_name.split('-')[0] + '-' + str(long_term_MA)]) < 0:
+        # Signal from long term MA
+        lt_MA = self._indicator_name.split('-')[0] + '-' +\
+            str(max(self._periods))
+        
+        # Price crosses above the long term MA
+        if self._input_data['Adj Close'][-2] < self._ti_data[lt_MA][-2] and\
+            self._input_data['Adj Close'][-1] > self._ti_data[lt_MA][-1]:
             
-            direction = self._input_data.iat[-1, 0] - self._ti_data.at[self._ti_data.index[-1], 
-                self._indicator_name.split('-')[0] + '-' + str(long_term_MA)]
-           
-            if direction > 0:
-                long_term_signal = TRADE_SIGNALS['Buy']
-            elif direction < 0:
-                long_term_signal = TRADE_SIGNALS['Sell']
-                
+            long_term_signal = TRADE_SIGNALS['Buy']
+        
+        # Price crosses below the long term MA        
+        elif self._input_data['Adj Close'][-2] > self._ti_data[lt_MA][-2] and\
+            self._input_data['Adj Close'][-1] < self._ti_data[lt_MA][-1]:
+            
+            long_term_signal = TRADE_SIGNALS['Sell']
+            
         else:
             long_term_signal = TRADE_SIGNALS['Hold']
-        
+            
         # Signal from short term MA
         if len(self._periods) > 1:
-            short_term_MA = min(self._periods)
+            st_MA = self._indicator_name.split('-')[0] + '-' +\
+                str(min(self._periods))
             
-            # MAs crosses each other
-            if (self._ti_data.at[self._ti_data.index[-2], 
-                self._indicator_name.split('-')[0] + '-'  + str(short_term_MA)] - \
-                self._ti_data.at[self._ti_data.index[-2], 
-                self._indicator_name.split('-')[0] + '-'  + str(long_term_MA)]) * \
-               (self._ti_data.at[self._ti_data.index[-1], 
-                self._indicator_name.split('-')[0] + '-'  + str(short_term_MA)] - \
-                self._ti_data.at[self._ti_data.index[-1], 
-                self._indicator_name.split('-')[0] + '-'  + str(long_term_MA)]) < 0:
-                
-                direction = self._ti_data.at[self._ti_data.index[-1], 
-                    self._indicator_name.split('-')[0] + '-'  + str(short_term_MA)] - \
-                    self._ti_data.at[self._ti_data.index[-1],
-                    self._indicator_name.split('-')[0] + '-'  + str(long_term_MA)]
-                            
-                if direction > 0:
-                    short_term_signal = TRADE_SIGNALS['Buy']
-                elif direction < 0:
-                    short_term_signal = TRADE_SIGNALS['Sell']
+            # Price crosses above the short term MA
+            if self._input_data['Adj Close'][-2] < self._ti_data[st_MA][-2] and\
+                self._input_data['Adj Close'][-1] > self._ti_data[st_MA][-1]:
+            
+                short_term_signal = TRADE_SIGNALS['Buy']
+        
+            # Price crosses below the short term MA        
+            elif self._input_data['Adj Close'][-2] > self._ti_data[st_MA][-2] and\
+                self._input_data['Adj Close'][-1] < self._ti_data[st_MA][-1]:
+            
+                short_term_signal = TRADE_SIGNALS['Sell']
             
             else:
                 short_term_signal = TRADE_SIGNALS['Hold']
+                
+        else:
+            short_term_signal = long_term_signal
                             
-            # Merge signals.
-            signal = long_term_signal + short_term_signal
+        # Merge signals.
+        signal = long_term_signal + short_term_signal
             
-            # Normalize signal if needed
-            if abs(signal) == 2:
-                signal = signal / 2
+        # Normalize signal if needed
+        if abs(signal) == 2:
+            signal = signal / 2
  
         return (list(TRADE_SIGNALS.keys())[list(TRADE_SIGNALS.values()).
             index(signal)], signal) 
